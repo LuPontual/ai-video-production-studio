@@ -1,0 +1,62 @@
+[
+ {
+  "id": "D1",
+  "kind": "dlg",
+  "text": "Trinta dias, Helena. Vamos ou não para os Estados Unidos?"
+ },
+ {
+  "id": "D2",
+  "kind": "dlg",
+  "text": "Se não formos agora, a concorrência vai."
+ },
+ {
+  "id": "D3",
+  "kind": "dlg",
+  "text": "Sem arrumar a casa, vamos exportar problemas."
+ },
+ {
+  "id": "D4",
+  "kind": "dlg",
+  "text": "E cada área está apostando numa IA diferente."
+ },
+ {
+  "id": "VO1",
+  "kind": "vo",
+  "text": "Opiniões não faltavam. Faltava clareza para decidir."
+ },
+ {
+  "id": "VO2",
+  "kind": "vo",
+  "text": "Helena começou pelo ICEIA™, para entender onde estava a principal oportunidade."
+ },
+ {
+  "id": "VO3",
+  "kind": "vo",
+  "text": "Depois, chamou a LULLIA."
+ },
+ {
+  "id": "VO4",
+  "kind": "vo",
+  "text": "Nas semanas seguintes, dados, mercado e pessoas viraram prioridades e um roadmap."
+ },
+ {
+  "id": "D5",
+  "kind": "dlg",
+  "text": "E então? Vamos?"
+ },
+ {
+  "id": "D6",
+  "kind": "dlg",
+  "text": "Vamos. Começando por aqui."
+ },
+ {
+  "id": "VO5",
+  "kind": "vo",
+  "text": "LULLIA. Estratégia e inteligência para empresas."
+ },
+ {
+  "id": "VO6",
+  "kind": "vo",
+  "text": "Comece pelo ICEIA™, o diagnóstico estratégico da LULLIA. Sem custo, em lullia.com.br."
+ }
+]

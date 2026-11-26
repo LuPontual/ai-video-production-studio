@@ -1,0 +1,23 @@
+import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);
+const { chromium } = require('playwright'); import fs from 'node:fs';
+const out = process.argv[2];
+const fontsJs = fs.readFileSync('/home/user/lullia-site/js/brief-fonts.js', 'utf8');
+const F = JSON.parse(fontsJs.slice(fontsJs.indexOf('{'), fontsJs.lastIndexOf('}') + 1));
+const face = (fam, file, w, st) => `@font-face{font-family:"${fam}";src:url(data:font/ttf;base64,${F[file]}) format("truetype");font-weight:${w};font-style:${st}}`;
+const css = [face('Bodoni Moda','BodoniModa-Regular.ttf',400,'normal'),face('Bodoni Moda','BodoniModa-Medium.ttf',500,'normal'),face('Bodoni Moda','BodoniModa-Italic.ttf',400,'italic'),
+  face('Jost','Jost-Light.ttf',300,'normal'),face('Jost','Jost-Regular.ttf',400,'normal'),face('Jost','Jost-Medium.ttf',500,'normal')].join('');
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+const blocked = new Set();
+await p.route('**/*', r => { const u = new URL(r.request().url()); if (u.hostname === '127.0.0.1') return r.continue(); blocked.add(u.hostname); return r.abort(); });
+await p.goto('http://127.0.0.1:8765/#iceia', { waitUntil: 'domcontentloaded' });
+await p.addStyleTag({ content: css }); await p.waitForTimeout(800);
+await p.screenshot({ path: `${out}/01_secao_iceia.png` });
+const btn = p.getByText('Iniciar meu ICEIA™').first();
+console.log('start button visible:', await btn.isVisible().catch(() => false));
+await btn.click({ timeout: 4000 }).catch(e => console.log('click failed:', e.message.split('\n')[0]));
+await p.waitForTimeout(900); await p.screenshot({ path: `${out}/02_inicio_fluxo.png` });
+const cont = p.getByText('Continuar').first();
+console.log('continuar visible:', await cont.isVisible().catch(() => false));
+console.log('blocked external hosts:', [...blocked].join(', '));
+await b.close();
