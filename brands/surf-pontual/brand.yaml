@@ -1,0 +1,31 @@
+# Brand configuration — SURF PONTUAL
+# Values marked null/TODO must be supplied by the user. Never invent brand values or logos.
+id: surf-pontual
+name: "SURF PONTUAL"
+description: "Surf instruction, education, authentic footage, student confidence, safety-oriented communication."
+voice:
+  languages: [pt, en, es]
+  tone: null            # TODO: supplied by user
+colors:                 # TODO: official hex values
+  primary: null
+  secondary: null
+  accent: null
+  text_on_dark: null
+  text_on_light: null
+typography:             # TODO: official font files go in fonts/ (license recorded below)
+  heading: { family: null, file: null, license: null }
+  body:    { family: null, file: null, license: null }
+logos:                  # official files only, used as-is
+  primary: null         # e.g. logos/primary.png
+  mono_light: null
+  mono_dark: null
+captions:
+  font: null            # falls back to a neutral system font until set
+  size_px_vertical: 64
+  outline_px: 4
+  highlight_color: null
+  position: lower_third
+platforms: ['instagram', 'tiktok', 'youtube']
+default_presets: ['vertical_1080', 'portrait_4x5', 'horizontal_1080']
+publishing:
+  enabled: false        # publication always requires explicit approval

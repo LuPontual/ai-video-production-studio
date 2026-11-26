@@ -1,0 +1,25 @@
+# Export presets. Values are technical defaults; brands may override caption style, not codec specs.
+defaults: &h264
+  container: mp4
+  video: { codec: libx264, profile: high, pix_fmt: yuv420p, crf: 18, preset: medium, fps: 30 }
+  audio: { codec: aac, sample_rate: 48000, bitrate: 192k, channels: 2 }
+  movflags: +faststart
+
+presets:
+  vertical_1080:   { <<: *h264, size: [1080, 1920], aspect: "9:16", loudness_lufs: -14, platforms: [instagram_reels, tiktok, youtube_shorts] }
+  horizontal_1080: { <<: *h264, size: [1920, 1080], aspect: "16:9", loudness_lufs: -14, platforms: [youtube, linkedin] }
+  square_1080:     { <<: *h264, size: [1080, 1080], aspect: "1:1",  loudness_lufs: -14, platforms: [linkedin, instagram_feed] }
+  portrait_4x5:    { <<: *h264, size: [1080, 1350], aspect: "4:5",  loudness_lufs: -14, platforms: [instagram_feed] }
+  horizontal_2160: { <<: *h264, size: [3840, 2160], aspect: "16:9", loudness_lufs: -14, requires_source_min_height: 2160 }
+  ambient_longform_1080:
+    <<: *h264
+    size: [1920, 1080]
+    aspect: "16:9"
+    loudness_lufs: -16
+    video: { codec: libx264, profile: high, pix_fmt: yuv420p, crf: 20, preset: slow, fps: 30 }
+  overlay_prores4444:
+    container: mov
+    video: { codec: prores_ks, profile: 4444, pix_fmt: yuva444p10le }
+    audio: null
+
+true_peak_dbtp: -1.0

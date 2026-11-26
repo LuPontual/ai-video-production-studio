@@ -1,0 +1,31 @@
+# Brand configuration — COZY DREAMY NIGHT
+# Values marked null/TODO must be supplied by the user. Never invent brand values or logos.
+id: cozy-dreamy-night
+name: "COZY DREAMY NIGHT"
+description: "Ambient, relaxation and long-form audiovisual experiences for YouTube."
+voice:
+  languages: [pt, en, es]
+  tone: null            # TODO: supplied by user
+colors:                 # TODO: official hex values
+  primary: null
+  secondary: null
+  accent: null
+  text_on_dark: null
+  text_on_light: null
+typography:             # TODO: official font files go in fonts/ (license recorded below)
+  heading: { family: null, file: null, license: null }
+  body:    { family: null, file: null, license: null }
+logos:                  # official files only, used as-is
+  primary: null         # e.g. logos/primary.png
+  mono_light: null
+  mono_dark: null
+captions:
+  font: null            # falls back to a neutral system font until set
+  size_px_vertical: 64
+  outline_px: 4
+  highlight_color: null
+  position: lower_third
+platforms: ['youtube']
+default_presets: ['ambient_longform_1080', 'horizontal_2160']
+publishing:
+  enabled: false        # publication always requires explicit approval

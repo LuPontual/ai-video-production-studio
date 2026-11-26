@@ -1,0 +1,14 @@
+loudness_tolerance_lu: 1.0
+true_peak_max_dbtp: -1.0
+black_min_duration_s: 0.5
+freeze_min_duration_s: 2.0      # warning, not blocking
+duration_tolerance_frames: 1
+av_sync_tolerance_frames: 1
+captions:
+  min_cue_s: 0.3
+  max_cue_s: 7.0
+  max_lines: 2
+  max_chars_per_line: 32
+safe_area:                      # fraction of frame reserved for platform UI (top, bottom, left, right)
+  vertical_1080: { top: 0.10, bottom: 0.20, left: 0.06, right: 0.12 }
+  default:       { top: 0.05, bottom: 0.08, left: 0.05, right: 0.05 }

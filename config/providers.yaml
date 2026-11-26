@@ -1,0 +1,11 @@
+# Generative / external providers. All disabled. Enabling requires user approval (CLAUDE.md §2),
+# a credential in the secret store and an allowed network host. Prices must be re-verified before use.
+providers:
+  runway:      { kind: gen_video, enabled: false, host: api.runwayml.com, pricing_verified: false }
+  higgsfield:  { kind: gen_video, enabled: false, host: null, pricing_verified: false, api_availability_verified: false }
+  kling:       { kind: gen_video, enabled: false, host: null, pricing_verified: false }
+  google_veo:  { kind: gen_video, enabled: false, host: null, pricing_verified: false }
+  wangp_local: { kind: gen_video, enabled: false, requires: nvidia_gpu, license_verified: false }
+  elevenlabs:  { kind: tts, enabled: false, host: api.elevenlabs.io, pricing_verified: false }
+  heygen_hyperframes_cloud: { kind: motion_render, enabled: false, via: mcp, note: "uploads content to HeyGen" }
+  adobe_express: { kind: design_video_tools, enabled: false, via: mcp, note: "uploads content to Adobe" }

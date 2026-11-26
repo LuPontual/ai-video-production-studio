@@ -1,0 +1,24 @@
+id: 20261126-surf-pontual-sample-tip
+brand: surf-pontual
+module: smart_editing
+brief:
+  objective: "60-90 s vertical tip for beginners: how to read a wave before paddling"
+  audience: "Beginner surf students, 18-45"
+  language: pt
+  tone: "Calm, confident, safety-first"
+sources:
+  - { path: surf-pontual/raw/sample-tip.mp4, sha256: null, role: primary }
+rights:
+  owner: "SURF PONTUAL"
+  license: "owned"
+  people_consent: true
+  music_license: null
+outputs:
+  - { preset: vertical_1080, captions: burn, languages: [pt] }
+params:
+  silence: { min_duration_s: 0.6, padding_s: 0.12, noise_db: -35 }
+  reframe: { mode: center, x_offset: 0 }
+  transcription: { model: small, compute_type: int8 }
+status: draft
+approvals: []
+budget: { max_provider_cost_usd: 0 }

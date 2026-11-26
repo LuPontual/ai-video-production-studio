@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ai-video-production-studio/schemas/job.schema.json",
+  "title": "Production Job",
+  "type": "object",
+  "required": ["id", "brand", "module", "brief", "sources", "rights", "outputs", "status"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-9]{8}-[a-z0-9-]+$" },
+    "brand": { "enum": ["lullia", "personal-brand", "cozy-dreamy-night", "surf-pontual"] },
+    "module": { "enum": ["smart_editing", "motion_graphics", "ambient_video", "ai_animation"] },
+    "brief": {
+      "type": "object",
+      "required": ["objective", "language"],
+      "properties": {
+        "objective": { "type": "string" },
+        "audience": { "type": "string" },
+        "language": { "enum": ["pt", "en", "es", "auto"] },
+        "tone": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["path", "role"],
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": ["string", "null"] },
+          "role": { "enum": ["primary", "broll", "music", "voiceover", "overlay"] }
+        }
+      }
+    },
+    "rights": {
+      "type": "object", "required": ["owner", "license"],
+      "properties": {
+        "owner": { "type": "string" },
+        "license": { "type": "string" },
+        "people_consent": { "enum": [true, false, "na"] },
+        "music_license": { "type": ["string", "null"] }
+      }
+    },
+    "outputs": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["preset"],
+        "properties": {
+          "preset": { "type": "string" },
+          "captions": { "enum": ["burn", "sidecar", "none"], "default": "burn" },
+          "languages": { "type": "array", "items": { "enum": ["pt", "en", "es"] } }
+        }
+      }
+    },
+    "params": { "type": "object" },
+    "status": { "enum": ["draft", "planned", "approved", "running", "qa_passed", "qa_failed", "review", "delivered"] },
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["gate", "by", "at"],
+        "properties": {
+          "gate": { "enum": ["plan", "install", "paid_call", "upload", "delivery", "publish"] },
+          "by": { "type": "string" }, "at": { "type": "string", "format": "date-time" }, "note": { "type": "string" }
+        }
+      }
+    },
+    "budget": { "type": "object", "properties": { "max_provider_cost_usd": { "type": "number", "minimum": 0, "default": 0 } } }
+  }
+}

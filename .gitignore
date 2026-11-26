@@ -1,0 +1,32 @@
+# Media and generated outputs — never committed
+media/*
+!media/README.md
+jobs/*
+!jobs/_examples/
+models/*
+!models/README.md
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+# Brand binaries (logos, fonts, audio) stay local or in approved storage
+brands/*/logos/*
+brands/*/fonts/*
+brands/*/audio/*
+!brands/*/**/.gitkeep
+# Secrets
+.env
+.env.*
+*.key
+# Runtimes
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+motion/out/
+.DS_Store
