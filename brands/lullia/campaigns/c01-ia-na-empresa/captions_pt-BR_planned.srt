@@ -1,0 +1,139 @@
+1
+00:00:00,100 --> NaN:NaN:NaN,NaN
+Todo mundo fala de
+
+2
+00:00:01,250 --> 00:00:02,850
+inteligência artificial.
+
+3
+00:00:03,100 --> NaN:NaN:NaN,NaN
+Poucos sabem o que fazer com
+
+4
+00:00:05,059 --> 00:00:06,950
+ela dentro de uma empresa.
+
+5
+00:00:07,100 --> NaN:NaN:NaN,NaN
+Criar textos,
+
+6
+00:00:07,927 --> NaN:NaN:NaN,NaN
+apresentações e imagens é
+
+7
+00:00:09,477 --> NaN:NaN:NaN,NaN
+apenas uma pequena parte do
+
+8
+00:00:11,183 --> NaN:NaN:NaN,NaN
+que essa tecnologia pode
+
+9
+00:00:12,682 --> 00:00:13,350
+oferecer.
+
+10
+00:00:13,500 --> NaN:NaN:NaN,NaN
+A verdadeira oportunidade está
+
+11
+00:00:15,309 --> NaN:NaN:NaN,NaN
+em transformar a maneira como
+
+12
+00:00:17,117 --> NaN:NaN:NaN,NaN
+as empresas vendem,
+
+13
+00:00:18,306 --> NaN:NaN:NaN,NaN
+atendem seus clientes,
+
+14
+00:00:19,650 --> 00:00:21,350
+tomam decisões e crescem.
+
+15
+00:00:21,500 --> NaN:NaN:NaN,NaN
+Mas existe uma pergunta que
+
+16
+00:00:23,270 --> 00:00:24,550
+quase ninguém faz:
+
+17
+00:00:24,700 --> 00:00:26,281
+Por onde começar?
+
+18
+00:00:27,100 --> NaN:NaN:NaN,NaN
+A resposta não está em adotar
+
+19
+00:00:29,125 --> 00:00:30,350
+mais ferramentas.
+
+20
+00:00:30,500 --> NaN:NaN:NaN,NaN
+Está em identificar onde a
+
+21
+00:00:32,132 --> NaN:NaN:NaN,NaN
+inteligência artificial pode
+
+22
+00:00:33,763 --> NaN:NaN:NaN,NaN
+gerar maior impacto no
+
+23
+00:00:35,140 --> 00:00:35,750
+negócio.
+
+24
+00:00:35,900 --> NaN:NaN:NaN,NaN
+É exatamente essa a proposta
+
+25
+00:00:37,715 --> NaN:NaN:NaN,NaN
+do ICEIA™,
+
+26
+00:00:38,408 --> NaN:NaN:NaN,NaN
+o diagnóstico estratégico da
+
+27
+00:00:40,170 --> 00:00:40,750
+LULLIA.
+
+28
+00:00:40,900 --> NaN:NaN:NaN,NaN
+Descubra onde estão as
+
+29
+00:00:42,250 --> NaN:NaN:NaN,NaN
+principais oportunidades de
+
+30
+00:00:43,800 --> 00:00:45,350
+evolução da sua empresa.
+
+31
+00:00:45,500 --> NaN:NaN:NaN,NaN
+LULLIA —
+
+32
+00:00:45,991 --> NaN:NaN:NaN,NaN
+Intelligence. Strategy.
+
+33
+00:00:47,152 --> 00:00:48,498
+Business Impact.
+
+34
+00:00:48,700 --> NaN:NaN:NaN,NaN
+Faça o ICEIA™ gratuitamente em
+
+35
+00:00:50,431 --> 00:00:51,331
+lullia.com.br.
