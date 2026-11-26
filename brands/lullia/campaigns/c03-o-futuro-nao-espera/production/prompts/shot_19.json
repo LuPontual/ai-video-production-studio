@@ -1,0 +1,36 @@
+{
+  "shot": 19,
+  "timecode": "46.5–48.5",
+  "act": "IV",
+  "edit_duration_s": 2.0,
+  "keyframe": {
+    "model": "gen4_image_1080p",
+    "model_id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p",
+    "references": [
+      "set_airport_gate"
+    ],
+    "prompt": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms. Medium, 35mm lens. Airport departure gate. Rafael (42, short dark hair, stubble) wearing light blue shirt, sleeves rolled, no tie; travel: navy jacket over same shirt. Monday. Rafael walks to the boarding gate holding a boarding pass, focused. Light: bright morning through terminal windows. 16:9, subject inside central 9:16 safe area. Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation.",
+    "negative": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "video": {
+    "model": "veo31_fast",
+    "model_id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+    "params": {
+      "model": "Fast",
+      "version": "3.1",
+      "resolution": "1080p",
+      "generate_audio": false,
+      "duration": "6s",
+      "aspect_ratio": "16:9"
+    },
+    "first_frame": "keyframe_19_approved.png",
+    "prompt": "Cinematic, realistic motion. Camera: follow. Monday. Rafael walks to the boarding gate holding a boarding pass, focused. Natural human micro-movements, no exaggerated gestures, no lip movement unless speaking is specified, keep lighting and wardrobe identical to the first frame. low morning sun backlight, amber and brass highlights, preserved nero blacks.",
+    "negative_prompt": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "composite": [
+    "boarding pass details added in post (no airline)"
+  ],
+  "vertical": "crop"
+}

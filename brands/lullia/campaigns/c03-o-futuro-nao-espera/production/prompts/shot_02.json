@@ -1,0 +1,40 @@
+{
+  "shot": 2,
+  "timecode": "3.0–6.0",
+  "act": "I",
+  "edit_duration_s": 3.0,
+  "keyframe": {
+    "model": "gen4_image_1080p",
+    "model_id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p",
+    "references": [
+      "helena_sheet",
+      "augusto_sheet",
+      "set_boardroom"
+    ],
+    "prompt": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms. Wide symmetrical, 32mm lens. Long dark walnut boardroom table for twelve. Helena (49, Brazilian, olive skin, dark brown shoulder-length hair with grey strands, brass stud earrings) wearing tailored navy blue blazer over a bone-white silk shirt, thin leather-strap watch. Augusto (62, silver hair, clean-shaven). six board members in dark suits. Helena sits alone at the far end of the long table, small in frame, hands on the folder; six board members in the foreground on both sides read as near-silhouettes; nobody moves. Light: cold overcast window backlight behind Helena, cool fluorescent top light, no fill. 16:9. Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation.",
+    "negative": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "video": {
+    "model": "veo31_standard",
+    "model_id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+    "params": {
+      "model": "Standard",
+      "version": "3.1",
+      "resolution": "1080p",
+      "generate_audio": false,
+      "duration": "6s",
+      "aspect_ratio": "16:9"
+    },
+    "first_frame": "keyframe_02_approved.png",
+    "prompt": "Cinematic, realistic motion. Camera: none, perfectly locked off. Helena sits alone at the far end of the long table, small in frame, hands on the folder; six board members in the foreground on both sides read as near-silhouettes; nobody moves. Natural human micro-movements, no exaggerated gestures, no lip movement unless speaking is specified, keep lighting and wardrobe identical to the first frame. cold overcast daylight and fluorescent top light, steel-blue and desaturated, deep nero blacks, contrast ratio about 4:1.",
+    "negative_prompt": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "composite": [],
+  "vertical": "own_9x16",
+  "vertical_variant": {
+    "aspect_ratio": "9:16",
+    "note": "recompose for vertical: subject centered, more headroom, same lighting"
+  }
+}

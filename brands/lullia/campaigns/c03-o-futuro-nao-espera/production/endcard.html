@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>LULLIA end card</title>
+<script src="../../../assets-generated/brand-assets.js"></script>
+<style>
+  html,body{margin:0;background:#0F1419}
+  #c{position:relative;overflow:hidden;background:#0F1419;color:#EFEAE0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .slogan{font-family:'Bodoni Moda',serif;font-weight:400;line-height:1.3}
+  .slogan i{font-style:italic}
+  .rule{background:linear-gradient(90deg,rgba(169,131,74,0),#A9834A,rgba(169,131,74,0))}
+  .cta{font-family:'Jost',sans-serif;font-weight:400;letter-spacing:.18em;text-transform:uppercase;color:#DCC08A}
+  .url{font-family:'Jost',sans-serif;font-weight:400;letter-spacing:.06em}
+  .pil{font-family:'Jost',sans-serif;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:#9B9B93;position:absolute;bottom:7%}
+</style></head><body><div id="c"></div>
+<script>
+const q = new URLSearchParams(location.search), W = +(q.get('w') || 1920), H = +(q.get('h') || 1080), V = H > W, s = Math.min(W, H) / 1080;
+const B = window.LULLIA_BRAND, c = document.getElementById('c'); c.style.width = W + 'px'; c.style.height = H + 'px';
+const fonts = [['Bodoni Moda','BodoniModa-Regular.ttf',400,'normal'],['Bodoni Moda','BodoniModa-Italic.ttf',400,'italic'],['Jost','Jost-Light.ttf',300,'normal'],['Jost','Jost-Regular.ttf',400,'normal']]
+  .map(([f,file,w,st]) => { const ff = new FontFace(f, Uint8Array.from(atob(B.fonts[file]), x => x.charCodeAt(0)).buffer, { weight: String(w), style: st }); document.fonts.add(ff); return ff.load(); });
+Promise.all(fonts).then(() => {
+  const L = B.logo.lockup_css, h = (V ? 120 : 104) * s, k = h / L.simbolo_height;
+  c.innerHTML = `
+    <div style="display:flex;align-items:center;gap:${L.gap * k}px">${B.logo.simbolo.replace('<svg', `<svg style="height:${h}px;width:auto"`)}${B.logo.lettering.replace('<svg', `<svg style="height:${L.lettering_height * k}px;width:auto"`)}</div>
+    <div class="rule" style="width:${(V ? 520 : 640) * s}px;height:${1.5 * s}px;margin:${54 * s}px 0 ${44 * s}px"></div>
+    <div class="slogan" style="font-size:${(V ? 52 : 50) * s}px">Inteligência que vira experiência.<br><i>Experiência que vira resultado.</i></div>
+    <div class="cta" style="font-size:${(V ? 26 : 22) * s}px;margin-top:${64 * s}px">Comece pelo ICEIA™ · diagnóstico estratégico sem custo</div>
+    <div class="url" style="font-size:${(V ? 46 : 40) * s}px;margin-top:${22 * s}px">lullia.com.br</div>
+    ${V ? '' : `<div class="pil" style="font-size:${17 * s}px">AI Strategy · Business Transformation · Global Intelligence · B2B Experiences</div>`}`;
+  window.__ready = true;
+});
+</script></body></html>

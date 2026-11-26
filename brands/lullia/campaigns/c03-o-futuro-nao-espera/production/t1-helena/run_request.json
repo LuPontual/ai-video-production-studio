@@ -1,0 +1,16 @@
+{
+  "tool": "figma_weave.weave_run_model",
+  "model": "Runway Gen-4 Image",
+  "id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+  "input": {
+    "prompt": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms. Close-up, 85mm lens. Long dark walnut boardroom table for twelve. Helena (49, Brazilian, olive skin, dark brown shoulder-length hair with grey strands, brass stud earrings) wearing tailored navy blue blazer over a bone-white silk shirt, thin leather-strap watch. Close-up of Helena, three-quarter view, hands resting on the closed folder below frame, she holds her gaze steady and breathes once, not anxious. Light: soft cold key from the window at camera left, gentle edge light, natural falloff into shadow. 16:9, subject inside central 9:16 safe area. Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation.",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p"
+  },
+  "quoted_credits_per_run": 10,
+  "quote_verified": "2026-11-26 (connector)",
+  "max_runs": 2,
+  "max_credits": 20,
+  "references": "none (this image becomes Helena's identity reference if approved)",
+  "evaluation": "python3 studio/core/image_qa.py OUTPUT.png --look cold --out scorecard.json + human scores 1-9"
+}

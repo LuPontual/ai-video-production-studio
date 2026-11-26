@@ -1,0 +1,912 @@
+{
+  "film": {
+    "id": "lullia-c03-v4.3",
+    "title_working": "LULLIA · decisão de conselho (V4.3)",
+    "duration_s": 59.5,
+    "fps": 24,
+    "master": "1920x1080",
+    "deliverables": [
+      "16x9_60s",
+      "9x16_60s",
+      "16x9_30s",
+      "9x16_30s",
+      "9x16_15s"
+    ],
+    "end_card_slogan": [
+      "Inteligência que vira experiência.",
+      "Experiência que vira resultado."
+    ],
+    "cta": "Comece pelo ICEIA™ · diagnóstico estratégico sem custo",
+    "url": "lullia.com.br",
+    "pillars_16x9": "AI Strategy · Business Transformation · Global Intelligence · B2B Experiences"
+  },
+  "style": {
+    "global_prefix": "Photorealistic cinematic film still from a premium international corporate film, shot on ARRI Alexa 35 with Cooke S4 spherical lenses, natural motivated lighting, realistic skin texture with visible pores, subtle 35mm film grain, restrained contemporary Brazilian corporate production design (exposed concrete, walnut wood, glass, plants), no visible brands or logos, no legible text anywhere in frame, no holograms, no robots, no futuristic UI, no glowing AI effects",
+    "global_negative": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera",
+    "acts": {
+      "I": {
+        "name": "Pressão",
+        "grade": "cold",
+        "look": "cold overcast daylight and fluorescent top light, steel-blue and desaturated, deep nero blacks, contrast ratio about 4:1"
+      },
+      "II": {
+        "name": "Clareza",
+        "grade": "night",
+        "look": "night, single warm brass practical lamp against blue city bokeh, low key"
+      },
+      "III": {
+        "name": "LULLIA",
+        "grade": "warm",
+        "look": "soft warm natural window light, bone white, walnut and brass tones, gentle contrast"
+      },
+      "IV": {
+        "name": "Decisão",
+        "grade": "golden",
+        "look": "low morning sun backlight, amber and brass highlights, preserved nero blacks"
+      },
+      "V": {
+        "name": "Assinatura",
+        "grade": "none",
+        "look": "official LULLIA end card: nero background, brass hairline, Bodoni Moda and Jost"
+      }
+    },
+    "compact_prefix": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms",
+    "compact_avoid": "Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation."
+  },
+  "characters": {
+    "helena": {
+      "name": "Helena Prado",
+      "role": "CEO (protagonista)",
+      "fictional": true,
+      "description": "Brazilian woman, 49 years old, warm olive skin, shoulder-length dark brown hair with a few natural grey strands, subtle natural makeup, calm and firm intelligent expression, upright posture, small brass stud earrings",
+      "wardrobe": {
+        "A": "tailored navy blue blazer over a bone-white silk shirt, thin leather-strap watch",
+        "B": "bone-white fine-knit sweater, sleeves slightly pushed up, same watch"
+      },
+      "reference_sheet": [
+        "front",
+        "three-quarter left",
+        "profile right",
+        "three-quarter right in wardrobe B"
+      ],
+      "short": "Helena (49, Brazilian, olive skin, dark brown shoulder-length hair with grey strands, brass stud earrings)"
+    },
+    "augusto": {
+      "name": "Augusto",
+      "role": "Presidente do conselho",
+      "fictional": true,
+      "description": "Brazilian man, about 62, short silver hair, clean-shaven, reading glasses in breast pocket, measured and serious",
+      "wardrobe": {
+        "A": "charcoal grey suit, white shirt, dark navy tie"
+      },
+      "reference_sheet": [
+        "front",
+        "three-quarter",
+        "profile",
+        "hands on table"
+      ],
+      "short": "Augusto (62, silver hair, clean-shaven)"
+    },
+    "ana": {
+      "name": "Ana",
+      "role": "Estrategista sênior da LULLIA",
+      "fictional": true,
+      "replaceable_by_real_team": true,
+      "description": "Brazilian woman, about 40, dark curly hair tied back, attentive listener, minimal jewelry, carries a dark notebook and pen",
+      "wardrobe": {
+        "A": "nero (near-black) structured blazer over bone-white top, no logos"
+      },
+      "reference_sheet": [
+        "front",
+        "three-quarter",
+        "back over-shoulder",
+        "profile"
+      ],
+      "short": "Ana (40, dark curly hair tied back, dark notebook)"
+    },
+    "rafael": {
+      "name": "Rafael",
+      "role": "Diretor comercial",
+      "fictional": true,
+      "description": "Brazilian man, about 42, short dark hair, light stubble, energetic but tired",
+      "wardrobe": {
+        "A": "light blue shirt, sleeves rolled, no tie; travel: navy jacket over same shirt"
+      },
+      "short": "Rafael (42, short dark hair, stubble)"
+    },
+    "marcos": {
+      "name": "Marcos",
+      "role": "Diretor de operações",
+      "fictional": true,
+      "description": "Afro-Brazilian man, about 50, close-cropped greying hair, pragmatic, arms often crossed",
+      "wardrobe": {
+        "A": "dark green quarter-zip sweater over shirt"
+      },
+      "short": "Marcos (50, Afro-Brazilian, close-cropped greying hair)"
+    },
+    "camila": {
+      "name": "Camila",
+      "role": "Diretora de marketing",
+      "fictional": true,
+      "description": "Brazilian woman, about 38, straight black hair in a low ponytail, thin-framed glasses, analytical",
+      "wardrobe": {
+        "A": "camel trench-style blazer over black top"
+      },
+      "short": "Camila (38, black hair in low ponytail, thin glasses)"
+    },
+    "thiago": {
+      "name": "Thiago",
+      "role": "Consultor da LULLIA (apoio)",
+      "fictional": true,
+      "description": "Brazilian man, about 33, seen mostly from behind or out of focus",
+      "wardrobe": {
+        "A": "nero jacket, bone shirt"
+      },
+      "short": "a young consultant seen from behind"
+    },
+    "daniel": {
+      "name": "Daniel",
+      "role": "Parceiro norte-americano (só em tela, fora de foco)",
+      "fictional": true,
+      "description": "American man, about 55, grey beard, seen only out of focus on a laptop screen",
+      "wardrobe": {
+        "A": "open-collar white shirt"
+      },
+      "short": "an American partner, out of focus on a laptop screen"
+    },
+    "board": {
+      "name": "Conselheiros",
+      "role": "Figurantes",
+      "fictional": true,
+      "description": "six board members aged 50 to 70, mixed genders and ethnicities, dark suits",
+      "wardrobe": {
+        "A": "dark suits"
+      },
+      "short": "six board members in dark suits"
+    }
+  },
+  "sets": {
+    "boardroom": {
+      "description": "long dark walnut boardroom table for twelve, leather chairs, one large window at the far end with overcast city view, linear ceiling lights, concrete wall, no art with text"
+    },
+    "night_office": {
+      "description": "Helena's corner office at night, floor-to-ceiling glass, city lights below, walnut desk, single brass desk lamp, closed laptop"
+    },
+    "glass_corridor": {
+      "description": "glass-walled corridor beside a meeting room, reflections, late afternoon cold light"
+    },
+    "ops_floor": {
+      "description": "open-plan operations and customer service floor, rows of desks, people with headsets, stacks of pending folders, large wall screen out of focus"
+    },
+    "camila_desk": {
+      "description": "marketing director desk with three open laptops side by side, screens out of focus"
+    },
+    "rafael_desk": {
+      "description": "sales director desk, phone face up on desk, coffee cup, papers"
+    },
+    "lobby": {
+      "description": "double-height corporate lobby with glass doors, stone floor, morning light, plants"
+    },
+    "workshop_room": {
+      "description": "bright meeting room with a long wall covered in handwritten bone-white paper cards in columns, large side window, walnut table"
+    },
+    "airport_gate": {
+      "description": "airport departure gate, large windows with aircraft out of focus, morning, no airline branding"
+    },
+    "kickoff_room": {
+      "description": "glass-walled project room with a long table, printed roadmap on the wall, door with brass handle"
+    },
+    "home_morning": {
+      "description": "Helena's kitchen counter at morning, warm sunlight, coffee cup"
+    }
+  },
+  "shots": [
+    {
+      "n": 1,
+      "in": 0.0,
+      "out": 3.0,
+      "act": "I",
+      "set": "boardroom",
+      "chars": [
+        "helena",
+        "augusto"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "framing": "extreme close-up insert",
+      "lens": "100mm macro",
+      "camera": "static, table level",
+      "move": "the folder slides into frame from left and stops under Helena's hands",
+      "action": "A closed bone-white document folder slides across dark walnut toward Helena's hands; her fingers rest on it without opening it.",
+      "light": "cold overcast window light grazing the wood, deep shadows",
+      "audio": {
+        "line": {
+          "who": "augusto",
+          "text": "Trinta dias, Helena.",
+          "at": 1.0,
+          "onscreen": false
+        },
+        "sfx": "room tone, chair creak, folder slide"
+      },
+      "composite": [
+        "folder label 'EXPANSÃO EUA' added in post"
+      ],
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 2,
+      "in": 3.0,
+      "out": 6.0,
+      "act": "I",
+      "set": "boardroom",
+      "chars": [
+        "helena",
+        "augusto",
+        "board"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "keyframe": "keyframe-1",
+      "framing": "wide symmetrical",
+      "lens": "32mm",
+      "camera": "static, table height, center axis",
+      "move": "none, perfectly locked off",
+      "action": "Helena sits alone at the far end of the long table, small in frame, hands on the folder; six board members in the foreground on both sides read as near-silhouettes; nobody moves.",
+      "light": "cold overcast window backlight behind Helena, cool fluorescent top light, no fill",
+      "audio": {
+        "sfx": "HVAC hum, silence"
+      },
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "own_9x16"
+    },
+    {
+      "n": 3,
+      "in": 6.0,
+      "out": 8.0,
+      "act": "I",
+      "set": "boardroom",
+      "chars": [
+        "helena"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "test_image": true,
+      "framing": "close-up",
+      "lens": "85mm",
+      "camera": "slow push-in",
+      "move": "imperceptible push-in",
+      "action": "Close-up of Helena, three-quarter view, hands resting on the closed folder below frame, she holds her gaze steady and breathes once, not anxious.",
+      "light": "soft cold key from the window at camera left, gentle edge light, natural falloff into shadow",
+      "audio": {
+        "sfx": "breath"
+      },
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 4,
+      "in": 8.0,
+      "out": 10.0,
+      "act": "I",
+      "set": "rafael_desk",
+      "chars": [
+        "rafael"
+      ],
+      "wardrobe": {
+        "rafael": "A"
+      },
+      "framing": "medium close",
+      "lens": "50mm",
+      "camera": "subtle handheld",
+      "move": "slight drift",
+      "action": "Rafael reads a message on his phone, exhales and rubs his eyes; the phone screen faces up but is unreadable.",
+      "light": "cold office light",
+      "audio": {
+        "sfx": "phone vibration"
+      },
+      "composite": [
+        "email preview 'Re: partnership — revisit next quarter?' added in post on phone screen"
+      ],
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 5,
+      "in": 10.0,
+      "out": 12.0,
+      "act": "I",
+      "set": "ops_floor",
+      "chars": [
+        "marcos"
+      ],
+      "wardrobe": {
+        "marcos": "A"
+      },
+      "framing": "medium wide",
+      "lens": "50mm",
+      "camera": "subtle handheld",
+      "move": "slow pan right",
+      "action": "Customer service team with headsets busy and strained; stacks of pending folders; Marcos stands among them and checks the wall clock.",
+      "light": "flat cool fluorescent",
+      "audio": {
+        "sfx": "service floor murmur"
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 6,
+      "in": 12.0,
+      "out": 14.0,
+      "act": "I",
+      "set": "camila_desk",
+      "chars": [
+        "camila"
+      ],
+      "wardrobe": {
+        "camila": "A"
+      },
+      "framing": "medium",
+      "lens": "50mm",
+      "camera": "subtle handheld",
+      "move": "slight drift",
+      "action": "Camila sits before three open laptops showing three different software tools (all screens out of focus); she closes one laptop.",
+      "light": "cold office light, screen glow on face",
+      "audio": {
+        "sfx": "laptop lid click"
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 7,
+      "in": 14.0,
+      "out": 17.0,
+      "act": "I",
+      "set": "glass_corridor",
+      "chars": [
+        "helena",
+        "rafael",
+        "marcos",
+        "camila"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "framing": "medium wide through glass",
+      "lens": "135mm",
+      "camera": "static",
+      "move": "none",
+      "action": "Through a glass wall, directors argue at a table; Helena, at the head, raises one hand slightly and everyone falls silent.",
+      "light": "cold late afternoon, reflections on glass",
+      "audio": {
+        "sfx": "overlapping muffled voices, then hard cut to silence"
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 8,
+      "in": 17.0,
+      "out": 20.0,
+      "act": "II",
+      "set": "night_office",
+      "chars": [
+        "helena"
+      ],
+      "wardrobe": {
+        "helena": "B"
+      },
+      "framing": "medium from behind to profile",
+      "lens": "85mm",
+      "camera": "slow 30 degree arc",
+      "move": "slow arc from behind to profile",
+      "action": "Night. Helena stands alone at the floor-to-ceiling window, the city lit below; she slowly turns her head toward the desk.",
+      "light": "single warm brass desk lamp, blue city bokeh",
+      "audio": {
+        "music": "sustained low cello note"
+      },
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "own_9x16"
+    },
+    {
+      "n": 9,
+      "in": 20.0,
+      "out": 24.5,
+      "act": "II",
+      "set": "night_office",
+      "chars": [
+        "helena"
+      ],
+      "wardrobe": {
+        "helena": "B"
+      },
+      "framing": "over the shoulder",
+      "lens": "50mm",
+      "camera": "locked off (screen replacement)",
+      "move": "none",
+      "action": "Over Helena's shoulder, she types on an open laptop; the screen is a clean light panel for later replacement; then a close-up of her face lit by the screen.",
+      "light": "screen light plus brass desk lamp",
+      "audio": {
+        "vo": {
+          "text": "Antes de decidir, ela quis saber onde agir primeiro.",
+          "at": 20.3
+        }
+      },
+      "composite": [
+        "real ICEIA™ interface (local capture) tracked onto the laptop screen",
+        "label: ICEIA™ · diagnóstico estratégico · sem custo"
+      ],
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 10,
+      "in": 24.5,
+      "out": 26.5,
+      "act": "II",
+      "set": "home_morning",
+      "chars": [
+        "helena"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "framing": "close-up hands and face",
+      "lens": "85mm",
+      "camera": "static",
+      "move": "none",
+      "action": "Morning. Helena reads her phone at the kitchen counter, then lifts it to her ear to make a call.",
+      "light": "warm golden morning",
+      "audio": {
+        "sfx": "birds, call ringing"
+      },
+      "composite": [
+        "email notification with the real Executive Brief added in post"
+      ],
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 11,
+      "in": 26.5,
+      "out": 29.0,
+      "act": "III",
+      "set": "lobby",
+      "chars": [
+        "helena",
+        "ana",
+        "thiago"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "framing": "wide",
+      "lens": "35mm",
+      "camera": "steadicam",
+      "move": "slow follow",
+      "action": "Ana and a colleague from LULLIA enter through the glass doors; Helena walks to meet them and shakes Ana's hand.",
+      "light": "morning daylight",
+      "audio": {
+        "music": "rhythmic pulse begins"
+      },
+      "composite": [
+        "label: LULLIA · Opportunity Blueprint"
+      ],
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "own_9x16"
+    },
+    {
+      "n": 12,
+      "in": 29.0,
+      "out": 31.0,
+      "act": "III",
+      "set": "ops_floor",
+      "chars": [
+        "ana",
+        "marcos"
+      ],
+      "wardrobe": {
+        "marcos": "A"
+      },
+      "framing": "medium",
+      "lens": "50mm",
+      "camera": "static",
+      "move": "none",
+      "action": "Ana interviews Marcos on the operations floor; she listens and takes notes in a dark notebook.",
+      "light": "warmer natural light now",
+      "audio": {
+        "music": "pulse"
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 13,
+      "in": 31.0,
+      "out": 33.0,
+      "act": "III",
+      "set": "workshop_room",
+      "chars": [
+        "ana",
+        "camila",
+        "daniel"
+      ],
+      "wardrobe": {
+        "camila": "A"
+      },
+      "framing": "medium over shoulder",
+      "lens": "50mm",
+      "camera": "static",
+      "move": "none",
+      "action": "Ana on a video call with an American partner whose face is out of focus on her laptop; beside her, Camila annotates a printed market study.",
+      "light": "warm natural window light",
+      "audio": {
+        "vo": {
+          "text": "Evidências e dados viraram prioridades, iniciativas e um roadmap.",
+          "at": 31.2
+        }
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 14,
+      "in": 33.0,
+      "out": 37.0,
+      "act": "III",
+      "set": "workshop_room",
+      "chars": [
+        "helena",
+        "ana"
+      ],
+      "wardrobe": {
+        "helena": "B"
+      },
+      "keyframe": "keyframe-2",
+      "framing": "medium over shoulder",
+      "lens": "50mm",
+      "camera": "slow lateral dolly left to right",
+      "move": "slow lateral dolly",
+      "action": "Over Ana's shoulder in soft foreground, Helena moves one handwritten card to the top of the wall of priorities.",
+      "light": "warm side window light, practical lamp",
+      "audio": {
+        "music": "builds"
+      },
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 15,
+      "in": 37.0,
+      "out": 39.0,
+      "act": "III",
+      "set": "workshop_room",
+      "chars": [
+        "helena"
+      ],
+      "wardrobe": {
+        "helena": "B"
+      },
+      "framing": "top-down insert",
+      "lens": "50mm",
+      "camera": "static overhead",
+      "move": "none",
+      "action": "Top-down: Helena's hand circles the first item of a printed handwritten roadmap with a brass pen.",
+      "light": "warm window light",
+      "audio": {
+        "music": "recedes"
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 16,
+      "in": 39.0,
+      "out": 41.5,
+      "act": "IV",
+      "set": "boardroom",
+      "chars": [
+        "helena",
+        "augusto",
+        "board"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "framing": "wide",
+      "lens": "35mm",
+      "camera": "static",
+      "move": "none",
+      "action": "Same boardroom, now in warm morning light; Helena stands and places the printed roadmap on the table; Augusto looks up.",
+      "light": "low warm sun through the far window",
+      "audio": {
+        "line": {
+          "who": "augusto",
+          "text": "E então?",
+          "at": 40.0,
+          "onscreen": "back or profile"
+        }
+      },
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "own_9x16"
+    },
+    {
+      "n": 17,
+      "in": 41.5,
+      "out": 43.5,
+      "act": "IV",
+      "set": "boardroom",
+      "chars": [
+        "helena"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "framing": "close-up three-quarter",
+      "lens": "85mm",
+      "camera": "static",
+      "move": "none",
+      "action": "Helena, three-quarter view, answers calmly and briefly.",
+      "light": "warm backlight with bone bounce fill",
+      "audio": {
+        "line": {
+          "who": "helena",
+          "text": "Começamos na segunda.",
+          "at": 41.7,
+          "onscreen": "three-quarter; cut to Augusto reaction if lip-sync fails"
+        }
+      },
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 18,
+      "in": 43.5,
+      "out": 46.5,
+      "act": "IV",
+      "set": "boardroom",
+      "chars": [
+        "helena",
+        "augusto"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "keyframe": "keyframe-3",
+      "framing": "low angle insert to medium",
+      "lens": "85mm",
+      "camera": "table level, rack focus",
+      "move": "rack focus from folder to Helena",
+      "action": "Augusto's hand slides the same folder back across the table toward Helena, who stands and receives it without smiling.",
+      "light": "low morning sun backlight, bone bounce",
+      "audio": {
+        "sfx": "folder slide amplified",
+        "music": "full theme"
+      },
+      "composite": [
+        "folder label 'EXPANSÃO EUA' added in post"
+      ],
+      "gen": {
+        "model": "veo31_standard",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 19,
+      "in": 46.5,
+      "out": 48.5,
+      "act": "IV",
+      "set": "airport_gate",
+      "chars": [
+        "rafael"
+      ],
+      "wardrobe": {
+        "rafael": "A"
+      },
+      "framing": "medium",
+      "lens": "35mm",
+      "camera": "steadicam",
+      "move": "follow",
+      "action": "Monday. Rafael walks to the boarding gate holding a boarding pass, focused.",
+      "light": "bright morning through terminal windows",
+      "audio": {
+        "music": "theme"
+      },
+      "composite": [
+        "boarding pass details added in post (no airline)"
+      ],
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 20,
+      "in": 48.5,
+      "out": 50.5,
+      "act": "IV",
+      "set": "ops_floor",
+      "chars": [
+        "marcos"
+      ],
+      "wardrobe": {
+        "marcos": "A"
+      },
+      "framing": "medium wide",
+      "lens": "35mm",
+      "camera": "steadicam",
+      "move": "slow push",
+      "action": "Marcos and his team mark a pilot area on the floor with tape and reposition desks.",
+      "light": "warm daylight",
+      "audio": {
+        "music": "theme"
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 21,
+      "in": 50.5,
+      "out": 53.0,
+      "act": "IV",
+      "set": "kickoff_room",
+      "chars": [
+        "helena",
+        "ana",
+        "rafael",
+        "camila"
+      ],
+      "wardrobe": {
+        "helena": "A"
+      },
+      "framing": "medium wide",
+      "lens": "35mm",
+      "camera": "steadicam",
+      "move": "follow then hold",
+      "action": "Helena enters the kickoff room where Ana and the leadership wait around the table; the glass door closes behind her.",
+      "light": "warm daylight",
+      "audio": {
+        "sfx": "door close, 0.3 s silence",
+        "vo": {
+          "text": "Comece pelo ICEIA™, o diagnóstico estratégico da LULLIA. Sem custo, em lullia.com.br.",
+          "at": 51.6
+        }
+      },
+      "gen": {
+        "model": "veo31_fast",
+        "duration": "6s",
+        "attempts": 3
+      },
+      "vertical": "crop"
+    },
+    {
+      "n": 22,
+      "in": 53.0,
+      "out": 59.5,
+      "act": "V",
+      "set": null,
+      "chars": [],
+      "local": true,
+      "framing": "end card",
+      "action": "Official logo, institutional slogan, CTA and URL on nero.",
+      "audio": {
+        "music": "final warm chord"
+      },
+      "gen": null,
+      "vertical": "own_9x16"
+    }
+  ],
+  "models": {
+    "gen4_image_1080p": {
+      "tool": "figma_weave",
+      "id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+      "credits": 10,
+      "verified": "quote 2026-11-26"
+    },
+    "veo31_standard": {
+      "tool": "figma_weave",
+      "id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+      "params": {
+        "model": "Standard",
+        "version": "3.1",
+        "resolution": "1080p",
+        "generate_audio": false
+      },
+      "credits_6s": 240,
+      "verified": "quote 2026-11-26"
+    },
+    "veo31_fast": {
+      "tool": "figma_weave",
+      "id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+      "params": {
+        "model": "Fast",
+        "version": "3.1",
+        "resolution": "1080p",
+        "generate_audio": false
+      },
+      "credits_6s": 90,
+      "verified": "quote 2026-11-26"
+    }
+  }
+}

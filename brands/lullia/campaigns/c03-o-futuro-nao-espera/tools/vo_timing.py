@@ -20,10 +20,11 @@ def est(text, kind):
     lo_r, nom_r, hi_r = (4.2, 4.6, 5.0) if kind == "vo" else (4.6, 5.0, 5.6)
     b = 0.18 * breaks
     return {"words": len(words), "syl": s, "min": round(s / hi_r + b, 2), "nom": round(s / nom_r + b, 2), "max": round(s / lo_r + b, 2)}
-lines = json.load(open(sys.argv[1]))
-tot = {"min": 0, "nom": 0, "max": 0, "words": 0}
-for L in lines:
-    e = est(L["text"], L["kind"]); L.update(e)
-    for k in tot: tot[k] += e[k]
-    print(f'{L["id"]:5} {L["kind"]:4} {e["words"]:3}w {e["syl"]:3}s  {e["min"]:5.2f}–{e["max"]:5.2f}s (nom {e["nom"]:5.2f})  {L["text"]}')
-print(f'TOTAL speech: {tot["words"]} words · {tot["min"]:.1f}–{tot["max"]:.1f}s (nominal {tot["nom"]:.1f}s)')
+if __name__ == "__main__":
+    lines = json.load(open(sys.argv[1]))
+    tot = {"min": 0, "nom": 0, "max": 0, "words": 0}
+    for L in lines:
+        e = est(L["text"], L["kind"]); L.update(e)
+        for k in tot: tot[k] += e[k]
+        print(f'{L["id"]:5} {L["kind"]:4} {e["words"]:3}w {e["syl"]:3}s  {e["min"]:5.2f}–{e["max"]:5.2f}s (nom {e["nom"]:5.2f})  {L["text"]}')
+    print(f'TOTAL speech: {tot["words"]} words · {tot["min"]:.1f}–{tot["max"]:.1f}s (nominal {tot["nom"]:.1f}s)')

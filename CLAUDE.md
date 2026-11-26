@@ -99,13 +99,14 @@ Stages are idempotent and checkpointed: a stage is skipped if its output hash ma
 - Long-form ambient: no visible loop seams, no loudness jumps, no flashing.
 - A deliverable is "done" only when QA passes **and** the user approves it.
 
-## 9. Environment facts (audited 2026-11-26 — see `docs/audits/`)
+## 9. Environment facts (audited 2026-11-26, updated same day — see `docs/audits/`)
 
 - Cloud container: Ubuntu 24.04, 4 vCPU Xeon, 15 GiB RAM, **no GPU**, ~60 GB free disk, ephemeral.
-- Present: ffmpeg 6.1.1 (x264/x265/SVT-AV1/VP9/ProRes, libass, loudnorm, zscale, libplacebo), Python 3.13 + uv, Node 22 + npm/pnpm/bun, Docker, Chrome for Testing, ImageMagick 6.
-- Absent: faster-whisper, yt-dlp, Remotion, HyperFrames CLI, torch.
-- Network: PyPI and npm reachable; **huggingface.co, youtube.com and generative-provider APIs blocked** by the environment policy.
-- Consequence: Whisper models and yt-dlp downloads need an approved network change or a pre-staged model; GPU workloads (WanGP, local diffusion) cannot run here.
+- Present: ffmpeg 6.1.1 (x264/x265/SVT-AV1/VP9/ProRes, libass, loudnorm, lut3d, perspective, zscale), Python 3.13 + uv, Node 22, Chrome/Playwright (headless WebGL via SwiftShader), ImageMagick 6.
+- Installed with approval: **faster-whisper 1.2.1** in `tools/whisper/.venv` (isolated); Whisper `small` model cached in `models/` (git-ignored).
+- Network: session environment "LULLIA Video Studio" (personal) allows PyPI/npm + Hugging Face hosts (huggingface.co, cdn-lfs*, us.aws.cdn.hf.co, cas-*.xethub.hf.co). youtube.com, provider APIs, weave.figma.com and most websites are blocked.
+- Generative video/image: only via the Figma Weave connector (Veo 3.1, Runway Gen-4/4.5, Kling). **The workspace is on the free Weave plan, whose MCP run allowance is exhausted**; every run needs a paid plan and per-run cost approval. Verified quotes: Gen-4 Image 10 cr; Veo 3.1 Standard 1080p 6 s 240 cr; Fast 90 cr; Standard 4K 720 cr.
+- Runway Gen-4 Image prompts must stay ≤ 1,000 characters (validated in `production/build.py`).
 
 ## 10. Working rules
 

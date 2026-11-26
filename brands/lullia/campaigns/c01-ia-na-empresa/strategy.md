@@ -11,7 +11,7 @@ Status: **aguardando aprovação** · Marca: LULLIA · Objetivo: leads B2B quali
 | Público | "diretorias e áreas de marketing, comunicação, RH e comercial de médias e grandes empresas" | Público-alvo da distribuição |
 | Slogan oficial | "Inteligência que vira experiência. Experiência que vira resultado." | **Divergência:** o roteiro usa "Intelligence. Strategy. Business Impact.", que não aparece no site → decisão pendente |
 | Identidade | nero `#0F1419`, osso `#EFEAE0`, pedra `#9B9B93`, latão `#A9834A` + gradiente foil; Bodoni Moda + Jost; logo vetorial oficial | Aplicada sem alterações |
-| Rastreamento | o formulário do ICEIA™ grava `utm_source/medium/campaign/content/term`, origem e referrer junto com o lead (Supabase); **não há** GA4, Meta Pixel ou LinkedIn Insight | A mensuração se apoia em UTMs |
+| Rastreamento | o formulário do ICEIA™ grava `utm_*`, origem e referrer junto com o lead (Supabase). **Correção (26/11):** o site também usa **Vercel Web Analytics** (sem cookies) com eventos `iceia_start`, `iceia_complete`, `brief_download`, `cta_click`, `form_submit`. Não há GA4, Meta Pixel ou LinkedIn Insight | UTMs + eventos Vercel |
 
 **Não verificado:** se o funil está operando ponta a ponta em produção. O site é bloqueado pela rede desta sessão. → Antes de publicar, fazer um envio de teste do ICEIA™ com `utm_source=teste`.
 
@@ -61,5 +61,5 @@ https://lullia.com.br/?utm_source={linkedin|instagram|youtube}&utm_medium={organ
 | Qualidade | % de leads de decisores (cargo e porte) | leitura dos leads |
 | Receita | leads que avançam para o Opportunity Blueprint | CRM / acompanhamento manual |
 
-**Lacuna:** sem analytics no site, quem clicou mas não concluiu o ICEIA™ fica invisível. Instalar analytics significaria alterar o site, o que está fora do escopo e depende da sua decisão.
+**Correção:** o funil início → conclusão do ICEIA™ é mensurável pelos eventos Vercel `iceia_start` e `iceia_complete` (já existentes no site). Atribuição por campanha continua via UTM no lead.
 **Leitura:** compare os hooks pela retenção em 3 s e pelos ICEIAs por 1.000 visualizações, não por curtidas.

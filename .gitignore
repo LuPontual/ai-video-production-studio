@@ -30,3 +30,6 @@ __pycache__/
 node_modules/
 motion/out/
 .DS_Store
+
+# Generated (python3 studio/core/grade.py write-luts config/luts)
+config/luts/*.cube

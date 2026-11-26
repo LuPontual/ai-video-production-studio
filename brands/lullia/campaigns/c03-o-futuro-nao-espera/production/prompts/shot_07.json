@@ -1,0 +1,35 @@
+{
+  "shot": 7,
+  "timecode": "14.0–17.0",
+  "act": "I",
+  "edit_duration_s": 3.0,
+  "keyframe": {
+    "model": "gen4_image_1080p",
+    "model_id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p",
+    "references": [
+      "helena_sheet",
+      "set_glass_corridor"
+    ],
+    "prompt": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms. Medium wide through glass, 135mm lens. Glass-walled corridor beside a meeting room. Helena (49, Brazilian, olive skin, dark brown shoulder-length hair with grey strands, brass stud earrings) wearing tailored navy blue blazer over a bone-white silk shirt, thin leather-strap watch. Rafael (42, short dark hair, stubble). Marcos (50, Afro-Brazilian, close-cropped greying hair). Camila (38, black hair in low ponytail, thin glasses). Through a glass wall, directors argue at a table; Helena, at the head, raises one hand slightly and everyone falls silent. Light: cold late afternoon, reflections on glass. 16:9, subject inside central 9:16 safe area. Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation.",
+    "negative": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "video": {
+    "model": "veo31_fast",
+    "model_id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+    "params": {
+      "model": "Fast",
+      "version": "3.1",
+      "resolution": "1080p",
+      "generate_audio": false,
+      "duration": "6s",
+      "aspect_ratio": "16:9"
+    },
+    "first_frame": "keyframe_07_approved.png",
+    "prompt": "Cinematic, realistic motion. Camera: none. Through a glass wall, directors argue at a table; Helena, at the head, raises one hand slightly and everyone falls silent. Natural human micro-movements, no exaggerated gestures, no lip movement unless speaking is specified, keep lighting and wardrobe identical to the first frame. cold overcast daylight and fluorescent top light, steel-blue and desaturated, deep nero blacks, contrast ratio about 4:1.",
+    "negative_prompt": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "composite": [],
+  "vertical": "crop"
+}

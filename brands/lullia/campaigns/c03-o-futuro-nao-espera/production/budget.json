@@ -1,0 +1,30 @@
+{
+  "vertical_strategies": {
+    "crop_from_1080p_master": {
+      "credits": 12660,
+      "vertical_quality": "LOW for 'crop' shots: 608 px real width upscaled to 1080"
+    },
+    "native_16x9_and_9x16_all_shots": {
+      "credits": 19840,
+      "vertical_quality": "full 1080x1920"
+    },
+    "native_9x16_only_then_16x9_later": {
+      "credits": 10150,
+      "vertical_quality": "full; 16:9 deferred to a second budget"
+    }
+  },
+  "assumptions": {
+    "image_attempts": 2,
+    "video_attempts_per_shot": "per spec (3)",
+    "image_credits": 10,
+    "veo31_standard_6s": 240,
+    "veo31_fast_6s": 90,
+    "source": "Figma Weave connector quotes, 2026-11-26"
+  },
+  "reference_assets": 23,
+  "keyframes": 25,
+  "image_credits": 960,
+  "video_credits": 11700,
+  "total_credits": 12660,
+  "helena_single_image_test_max_credits": 20
+}

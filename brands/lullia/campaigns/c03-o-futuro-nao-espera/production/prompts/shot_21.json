@@ -1,0 +1,36 @@
+{
+  "shot": 21,
+  "timecode": "50.5–53.0",
+  "act": "IV",
+  "edit_duration_s": 2.5,
+  "keyframe": {
+    "model": "gen4_image_1080p",
+    "model_id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p",
+    "references": [
+      "helena_sheet",
+      "ana_sheet",
+      "set_kickoff_room"
+    ],
+    "prompt": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms. Medium wide, 35mm lens. Glass-walled project room with a long table. Helena (49, Brazilian, olive skin, dark brown shoulder-length hair with grey strands, brass stud earrings) wearing tailored navy blue blazer over a bone-white silk shirt, thin leather-strap watch. Ana (40, dark curly hair tied back, dark notebook). Rafael (42, short dark hair, stubble). Camila (38, black hair in low ponytail, thin glasses). Helena enters the kickoff room where Ana and the leadership wait around the table; the glass door closes behind her. Light: warm daylight. 16:9, subject inside central 9:16 safe area. Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation.",
+    "negative": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "video": {
+    "model": "veo31_fast",
+    "model_id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+    "params": {
+      "model": "Fast",
+      "version": "3.1",
+      "resolution": "1080p",
+      "generate_audio": false,
+      "duration": "6s",
+      "aspect_ratio": "16:9"
+    },
+    "first_frame": "keyframe_21_approved.png",
+    "prompt": "Cinematic, realistic motion. Camera: follow then hold. Helena enters the kickoff room where Ana and the leadership wait around the table; the glass door closes behind her. Natural human micro-movements, no exaggerated gestures, no lip movement unless speaking is specified, keep lighting and wardrobe identical to the first frame. low morning sun backlight, amber and brass highlights, preserved nero blacks.",
+    "negative_prompt": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "composite": [],
+  "vertical": "crop"
+}

@@ -1,0 +1,35 @@
+{
+  "shot": 13,
+  "timecode": "31.0–33.0",
+  "act": "III",
+  "edit_duration_s": 2.0,
+  "keyframe": {
+    "model": "gen4_image_1080p",
+    "model_id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p",
+    "references": [
+      "ana_sheet",
+      "set_workshop_room"
+    ],
+    "prompt": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms. Medium over shoulder, 50mm lens. Bright meeting room with a long wall covered in handwritten bone-white paper cards in columns. Ana (40, dark curly hair tied back, dark notebook). Camila (38, black hair in low ponytail, thin glasses) wearing camel trench-style blazer over black top. an American partner, out of focus on a laptop screen. Ana on a video call with an American partner whose face is out of focus on her laptop; beside her, Camila annotates a printed market study. Light: warm natural window light. 16:9, subject inside central 9:16 safe area. Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation.",
+    "negative": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "video": {
+    "model": "veo31_fast",
+    "model_id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+    "params": {
+      "model": "Fast",
+      "version": "3.1",
+      "resolution": "1080p",
+      "generate_audio": false,
+      "duration": "6s",
+      "aspect_ratio": "16:9"
+    },
+    "first_frame": "keyframe_13_approved.png",
+    "prompt": "Cinematic, realistic motion. Camera: none. Ana on a video call with an American partner whose face is out of focus on her laptop; beside her, Camila annotates a printed market study. Natural human micro-movements, no exaggerated gestures, no lip movement unless speaking is specified, keep lighting and wardrobe identical to the first frame. soft warm natural window light, bone white, walnut and brass tones, gentle contrast.",
+    "negative_prompt": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "composite": [],
+  "vertical": "crop"
+}

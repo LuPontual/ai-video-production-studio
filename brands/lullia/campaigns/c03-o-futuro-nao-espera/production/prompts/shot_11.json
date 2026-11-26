@@ -1,0 +1,42 @@
+{
+  "shot": 11,
+  "timecode": "26.5–29.0",
+  "act": "III",
+  "edit_duration_s": 2.5,
+  "keyframe": {
+    "model": "gen4_image_1080p",
+    "model_id": "9319eb12-1407-44b3-ba8d-5d5925554305",
+    "aspect_ratio": "16:9",
+    "resolution": "1080p",
+    "references": [
+      "helena_sheet",
+      "ana_sheet",
+      "set_lobby"
+    ],
+    "prompt": "Photorealistic cinematic film still, ARRI Alexa 35, Cooke lenses, motivated natural light, real skin texture, subtle film grain, contemporary Brazilian corporate design, no logos, no legible text, no holograms. Wide, 35mm lens. Double-height corporate lobby with glass doors. Helena (49, Brazilian, olive skin, dark brown shoulder-length hair with grey strands, brass stud earrings) wearing tailored navy blue blazer over a bone-white silk shirt, thin leather-strap watch. Ana (40, dark curly hair tied back, dark notebook). a young consultant seen from behind. Ana and a colleague from LULLIA enter through the glass doors; Helena walks to meet them and shakes Ana's hand. Light: morning daylight. 16:9. Avoid: plastic skin, deformed hands, text, logos, sci-fi UI, oversaturation.",
+    "negative": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "video": {
+    "model": "veo31_fast",
+    "model_id": "fg6e8647-d90a-4bad-a845-69fdc102a14j",
+    "params": {
+      "model": "Fast",
+      "version": "3.1",
+      "resolution": "1080p",
+      "generate_audio": false,
+      "duration": "6s",
+      "aspect_ratio": "16:9"
+    },
+    "first_frame": "keyframe_11_approved.png",
+    "prompt": "Cinematic, realistic motion. Camera: slow follow. Ana and a colleague from LULLIA enter through the glass doors; Helena walks to meet them and shakes Ana's hand. Natural human micro-movements, no exaggerated gestures, no lip movement unless speaking is specified, keep lighting and wardrobe identical to the first frame. soft warm natural window light, bone white, walnut and brass tones, gentle contrast.",
+    "negative_prompt": "plastic skin, airbrushed, uncanny eyes, extra fingers, deformed hands, distorted teeth, warped glasses, text, letters, watermark, logo, signage, hologram, robot, neon, sci-fi interface, oversaturated, HDR look, cartoon, illustration, 3d render, stock photo smile, posing for camera"
+  },
+  "composite": [
+    "label: LULLIA · Opportunity Blueprint"
+  ],
+  "vertical": "own_9x16",
+  "vertical_variant": {
+    "aspect_ratio": "9:16",
+    "note": "recompose for vertical: subject centered, more headroom, same lighting"
+  }
+}
