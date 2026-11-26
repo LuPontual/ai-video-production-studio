@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>LULLIA V4.3 keyframe design sheets</title>
+<script src="../../../assets-generated/brand-assets.js"></script>
+<style>
+  body{margin:0;background:#0A0D10}
+  #s{width:1920px;height:1080px;position:relative;background:#0F1419;color:#EFEAE0;font-family:'Jost',sans-serif;overflow:hidden}
+  .lbl{letter-spacing:.22em;text-transform:uppercase;font-size:15px;color:#DCC08A}
+  h1{font-family:'Bodoni Moda',serif;font-weight:400;font-size:44px;margin:6px 0 0}
+  .spec{font-size:18px;line-height:1.55;color:#EFEAE0}
+  .spec b{color:#DCC08A;font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-size:13px;display:inline-block;width:150px}
+  .note{font-size:14px;color:#9B9B93;letter-spacing:.04em}
+  .sw{display:inline-block;width:46px;height:22px;margin-right:6px;vertical-align:middle;border:1px solid rgba(255,255,255,.15)}
+</style></head><body><div id="s"></div>
+<script>
+const B = window.LULLIA_BRAND, k = +(new URLSearchParams(location.search).get('k') || 1);
+const fontsLoaded = Promise.all([['Bodoni Moda','BodoniModa-Regular.ttf',400,'normal'],['Bodoni Moda','BodoniModa-Italic.ttf',400,'italic'],['Jost','Jost-Light.ttf',300,'normal'],['Jost','Jost-Regular.ttf',400,'normal'],['Jost','Jost-Medium.ttf',500,'normal']]
+  .map(([f,file,w,st])=>{const ff=new FontFace(f,Uint8Array.from(atob(B.fonts[file]),c=>c.charCodeAt(0)).buffer,{weight:String(w),style:st});document.fonts.add(ff);return ff.load();}));
+// person silhouette (bust or seated), x,y = base center, s = scale
+const person = (x, y, s, fill, opts = {}) => {
+  const h = 46 * s, w = 120 * s;
+  return `<g opacity="${opts.op ?? 1}" ${opts.blur ? `filter="url(#b${opts.blur})"` : ''}>
+    <path d="M${x - w/2},${y} C${x - w/2},${y - 70*s} ${x - w*0.32},${y - 92*s} ${x},${y - 94*s} C${x + w*0.32},${y - 92*s} ${x + w/2},${y - 70*s} ${x + w/2},${y} Z" fill="${fill}"/>
+    <ellipse cx="${x}" cy="${y - 94*s - h*0.55}" rx="${h*0.42}" ry="${h*0.55}" fill="${fill}"/>
+    <rect x="${x - h*0.16}" y="${y - 100*s}" width="${h*0.32}" height="${12*s}" fill="${fill}"/>
+    ${opts.rim ? `<path d="M${x + w*0.08},${y - 92*s} C${x + w*0.32},${y - 90*s} ${x + w/2},${y - 70*s} ${x + w/2},${y - 20*s}" stroke="${opts.rim}" stroke-width="${3*s}" fill="none"/>
+      <path d="M${x + h*0.1},${y - 94*s - h*1.05} A${h*0.42},${h*0.55} 0 0 1 ${x + h*0.42},${y - 94*s - h*0.5}" stroke="${opts.rim}" stroke-width="${3*s}" fill="none"/>` : ''}
+  </g>`;
+};
+const defs = `<defs>${[2,4,8,14].map(r=>`<filter id="b${r}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${r}"/></filter>`).join('')}
+  <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .07 0"/></filter></defs>`;
+const FW = 1104, FH = 621; // 16:9 frame
+const safe916 = `<rect x="${FW/2 - FH*9/32}" y="0" width="${FH*9/16}" height="${FH}" fill="none" stroke="#DCC08A" stroke-dasharray="8 8" stroke-opacity=".7"/>
+  <text x="${FW/2 - FH*9/32 + 10}" y="22" fill="#DCC08A" font-size="13" letter-spacing="2">RECORTE 9:16</text>`;
+const thirds = `<g stroke="#fff" stroke-opacity=".12">${[1,2].map(i=>`<line x1="${FW*i/3}" y1="0" x2="${FW*i/3}" y2="${FH}"/><line x1="0" y1="${FH*i/3}" x2="${FW}" y2="${FH*i/3}"/>`).join('')}</g>`;
+
+const K = {
+ 1: { scene: 'CENA 2 · CONFLITO', title: 'A mesa do conselho', time: '0:04–0:07 · 3,0 s',
+  frame: () => {
+    let g = `<rect width="${FW}" height="${FH}" fill="#121820"/>
+      <rect x="${FW/2-170}" y="90" width="340" height="230" fill="#8FA3B5" opacity=".55"/>
+      <rect x="${FW/2-170}" y="90" width="340" height="230" fill="url(#win)" />
+      <g stroke="#0d1117" stroke-width="6"><line x1="${FW/2}" y1="90" x2="${FW/2}" y2="320"/><line x1="${FW/2-170}" y1="205" x2="${FW/2+170}" y2="205"/></g>
+      ${[0,1,2,3].map(i=>`<rect x="${FW/2-250-i*60}" y="${40-i*12}" width="${500+i*120}" height="${5+i}" fill="#C9D6E2" opacity="${.5-i*.08}"/>`).join('')}
+      <polygon points="${FW/2-120},330 ${FW/2+120},330 ${FW+140},${FH} ${-140},${FH}" fill="#1E242B"/>
+      <polygon points="${FW/2-120},330 ${FW/2+120},330 ${FW/2+128},338 ${FW/2-128},338" fill="#8FA3B5" opacity=".35"/>`;
+    g += person(FW/2, 336, .62, '#2A3038', { rim: '#B9C8D6' });                       // Helena, far end
+    [[.36,350,.7],[.27,390,.95],[.16,450,1.3],[.03,540,1.8]].forEach(([fx,y,s],i)=>{   // board, left and right
+      g += person(FW*fx, y + 40, s, '#07090c', { blur: i===3 ? 4 : 0 });
+      g += person(FW*(1-fx), y + 40, s, '#07090c', { blur: i===3 ? 4 : 0 }); });
+    g += `<rect width="${FW}" height="${FH}" fill="#4A6075" opacity=".12"/>`;
+    return g; },
+  plot: `<rect x="40" y="40" width="380" height="300" fill="none" stroke="#9B9B93"/><rect x="150" y="40" width="160" height="8" fill="#8FA3B5"/>
+    <text x="150" y="34" fill="#9B9B93" font-size="12">janela: luz nublada 6500 K (contraluz)</text>
+    <rect x="200" y="80" width="60" height="230" fill="#2A3038" stroke="#9B9B93"/><circle cx="230" cy="70" r="9" fill="#DCC08A"/><text x="244" y="74" fill="#DCC08A" font-size="12">Helena</text>
+    ${[110,150,190,230,270].map(y=>`<circle cx="188" cy="${y}" r="6" fill="#555"/><circle cx="272" cy="${y}" r="6" fill="#555"/>`).join('')}
+    ${[90,150,210,270].map(y=>`<rect x="225" y="${y}" width="10" height="34" fill="#C9D6E2" opacity=".7"/>`).join('')}
+    <text x="300" y="200" fill="#C9D6E2" font-size="12">fluorescente de teto</text><text x="300" y="214" fill="#C9D6E2" font-size="12">5600 K, difusa, fria</text>
+    <polygon points="230,330 218,352 242,352" fill="#EFEAE0"/><text x="250" y="348" fill="#EFEAE0" font-size="12">câmera 32 mm · altura da mesa</text>`,
+  specs: [['Lente','32 mm · T5.6 · profundidade de campo total'],['Câmera','Estática, altura da mesa, eixo central (simetria)'],['Luz','Contraluz frio de janela nublada + fluorescente de teto; sem preenchimento: os conselheiros viram silhuetas'],['Cor','Aço, azul-acinzentado, dessaturado; nero nos pretos'],['Atuação','Helena imóvel, mãos sobre a pasta; o silêncio pesa'],['Intenção','Escala de poder: Helena pequena no fundo, o conselho domina o quadro'],['9:16','Recorte central mantém Helena e a perspectiva da mesa']],
+  pal: ['#121820','#4A6075','#8FA3B5','#C9D6E2','#0F1419'] },
+ 2: { scene: 'CENA 11 · TRANSFORMAÇÃO', title: 'A parede de prioridades', time: '0:33–0:37 · 4,0 s',
+  frame: () => {
+    let g = `<rect width="${FW}" height="${FH}" fill="#2A221A"/>
+      <rect x="0" y="0" width="${FW}" height="${FH}" fill="url(#warm)"/>
+      <rect x="120" y="70" width="820" height="430" fill="#3A2F24"/>`;
+    for (let r=0;r<4;r++) for (let c=0;c<7;c++) { const x=150+c*110+(r%2)*8, y=95+r*100;
+      g += `<g filter="url(#b2)"><rect x="${x}" y="${y}" width="92" height="74" fill="#EFEAE0" opacity="${.78 - c*.04}"/>
+        <path d="M${x+10},${y+22} q18,-6 34,0 t34,0 M${x+10},${y+40} q14,-5 28,0 t24,0" stroke="#3A3530" stroke-width="2" fill="none"/></g>`; }
+    g += `<rect x="700" y="40" width="96" height="78" fill="#F5F1E9"/><path d="M712,66 q18,-6 34,0 t30,0 M712,86 q14,-5 28,0 t20,0" stroke="#2A2520" stroke-width="2.5" fill="none"/>
+      <rect x="700" y="40" width="96" height="4" fill="#A9834A"/>`;
+    g += person(760, 610, 2.0, '#1A140F', { rim: '#E8B777' });                         // Helena reaching (sharp)
+    g += `<path d="M845,462 C885,330 800,200 752,124" stroke="#1A140F" stroke-width="24" stroke-linecap="round" fill="none"/>
+      <path d="M857,458 C897,326 812,196 764,122" stroke="#E8B777" stroke-width="2.5" fill="none" opacity=".85"/>`;
+    g += person(120, 700, 3.4, '#0B0907', { blur: 14 });                                  // Ana, foreground OTS, blurred
+    g += `<rect x="${FW-140}" y="0" width="140" height="${FH}" fill="#F2C784" opacity=".18" filter="url(#b14)"/>`;
+    return g; },
+  plot: `<rect x="40" y="40" width="380" height="300" fill="none" stroke="#9B9B93"/><rect x="40" y="70" width="12" height="200" fill="#EFEAE0"/><text x="58" y="66" fill="#9B9B93" font-size="12">parede de prioridades</text>
+    <rect x="412" y="80" width="8" height="220" fill="#F2C784"/><text x="300" y="320" fill="#F2C784" font-size="12">janela 5600 K + gelatina CTO ¼</text>
+    <circle cx="120" cy="170" r="11" fill="#DCC08A"/><text x="136" y="174" fill="#DCC08A" font-size="12">Helena</text>
+    <circle cx="230" cy="215" r="11" fill="#666"/><text x="246" y="219" fill="#9B9B93" font-size="12">Ana (LULLIA), 1º plano</text>
+    <circle cx="170" cy="300" r="7" fill="#E8B777"/><text x="182" y="304" fill="#E8B777" font-size="12">prático 3200 K (luminária)</text>
+    <polygon points="300,250 288,272 312,272" fill="#EFEAE0"/><text x="250" y="292" fill="#EFEAE0" font-size="12">câmera 50 mm · ombro</text>`,
+  specs: [['Lente','50 mm · T2 · foco em Helena e no cartão'],['Câmera','Dolly lateral lento da esquerda para a direita, por cima do ombro de Ana (LULLIA)'],['Luz','Janela lateral quente (CTO ¼) como key; prático de 3200 K; parede em osso'],['Cor','Osso, madeira, latão; contraste suave'],['Atuação','Helena move um cartão para o topo; Ana observa; nenhuma fala'],['Intenção','A estratégia é construída junto: LULLIA em quadro, decisão nas mãos de Helena'],['9:16','Recorte desloca para a direita (Helena + cartão)']],
+  pal: ['#2A221A','#E8B777','#EFEAE0','#A9834A','#3A2F24'] },
+ 3: { scene: 'CENA 14 · RESULTADO', title: 'A pasta devolvida', time: '0:44–0:47 · 3,0 s',
+  frame: () => {
+    let g = `<rect width="${FW}" height="${FH}" fill="#1B1712"/><rect x="0" y="0" width="${FW}" height="${FH}" fill="url(#morning)"/>
+      <rect x="560" y="60" width="420" height="260" fill="#F2D29B" opacity=".55" filter="url(#b8)"/>
+      <polygon points="0,${FH*0.72} ${FW},${FH*0.66} ${FW},${FH} 0,${FH}" fill="#2B2118"/>
+      <polygon points="0,${FH*0.72} ${FW},${FH*0.66} ${FW},${FH*0.68} 0,${FH*0.745}" fill="#E8B777" opacity=".35"/>`;
+    g += person(760, 470, 1.75, '#14100C', { rim: '#F2C784' });                          // Helena standing, mid-ground
+    g += `<rect x="690" y="250" width="0" height="0"/>`;
+    g += `<g><polygon points="230,${FH-70} 640,${FH-110} 700,${FH-20} 250,${FH+30}" fill="#EFEAE0"/>
+      <polygon points="230,${FH-70} 640,${FH-110} 642,${FH-104} 232,${FH-64}" fill="#A9834A"/>
+      <rect x="300" y="${FH-70}" width="150" height="16" fill="#3A3530" opacity=".55" transform="rotate(-5 300 ${FH-70})"/></g>`;
+    g += `<path d="M0,${FH-40} C80,${FH-60} 160,${FH-70} 235,${FH-62}" stroke="#0B0907" stroke-width="46" stroke-linecap="round" fill="none" filter="url(#b4)"/>`; // chair's hand/arm
+    return g; },
+  plot: `<rect x="40" y="40" width="380" height="300" fill="none" stroke="#9B9B93"/><rect x="150" y="40" width="160" height="8" fill="#F2C784"/>
+    <text x="150" y="34" fill="#F2C784" font-size="12">janela: sol baixo da manhã (contraluz quente)</text>
+    <rect x="200" y="80" width="60" height="230" fill="#2B2118" stroke="#9B9B93"/><circle cx="230" cy="70" r="9" fill="#DCC08A"/><text x="244" y="74" fill="#DCC08A" font-size="12">Helena (em pé)</text>
+    <circle cx="188" cy="290" r="8" fill="#666"/><text x="60" y="294" fill="#9B9B93" font-size="12">conselheiro</text>
+    <rect x="205" y="250" width="30" height="20" fill="#EFEAE0"/><text x="244" y="262" fill="#EFEAE0" font-size="12">pasta</text>
+    <rect x="320" y="150" width="60" height="8" fill="#EFEAE0" opacity=".6"/><text x="300" y="176" fill="#EFEAE0" font-size="12">rebatedor osso (preenchimento)</text>
+    <polygon points="230,330 218,352 242,352" fill="#EFEAE0"/><text x="250" y="348" fill="#EFEAE0" font-size="12">câmera 85 mm · rente à mesa</text>`,
+  specs: [['Lente','85 mm · T2.8 · foco de transição: pasta → Helena'],['Câmera','Rente à mesa, contra-plongée leve; a pasta desliza em direção à lente'],['Luz','Mesma sala da cena 2, agora com sol baixo em contraluz e rebatedor osso'],['Cor','Âmbar, latão, osso; pretos nero preservados'],['Atuação','O conselheiro devolve a pasta "Expansão EUA"; Helena, de pé, recebe sem sorrir: responsabilidade, não celebração'],['Intenção','Espelho da cena 1: a mesma pasta, agora uma decisão com dono'],['9:16','Recorte central: pasta em primeiro plano + Helena acima']],
+  pal: ['#1B1712','#F2C784','#E8B777','#EFEAE0','#A9834A'] }
+}[k];
+
+fontsLoaded.then(() => {
+  const L = B.logo; const sw = K.pal.map(c=>`<span class="sw" style="background:${c}"></span>`).join('');
+  document.getElementById('s').innerHTML = `
+  <div style="position:absolute;left:64px;top:44px"><div class="lbl">LULLIA · V4.3 · keyframe planejado ${k}/3 · ${K.scene}</div><h1>${K.title} <span style="font-size:22px;color:#9B9B93;font-family:Jost">${K.time}</span></h1></div>
+  <div style="position:absolute;right:64px;top:52px;display:flex;align-items:center;gap:12px;height:30px">${L.simbolo.replace('<svg','<svg style="height:30px;width:auto"')}${L.lettering.replace('<svg','<svg style="height:15px;width:auto"')}</div>
+  <svg style="position:absolute;left:64px;top:150px" width="${FW}" height="${FH}" viewBox="0 0 ${FW} ${FH}">${defs}
+    <defs><linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DDE7EF" stop-opacity=".9"/><stop offset="1" stop-color="#8FA3B5" stop-opacity=".3"/></linearGradient>
+      <linearGradient id="warm" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#F2C784" stop-opacity=".5"/><stop offset=".6" stop-color="#7A5A3A" stop-opacity=".15"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+      <radialGradient id="morning" cx=".7" cy=".3" r=".8"><stop offset="0" stop-color="#F2C784" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>
+    <g>${K.frame()}</g><rect width="${FW}" height="${FH}" filter="url(#grain)"/>${thirds}${safe916}
+    <rect width="${FW}" height="${FH}" fill="none" stroke="#9B9B93"/></svg>
+  <div class="note" style="position:absolute;left:64px;top:${150+FH+14}px;width:${FW}px">Estudo de valor tonal e composição (planejamento de direção de fotografia). Não é a imagem final: a fotografia real será validada no teste T1.</div>
+  <div style="position:absolute;left:${64+FW+56}px;top:150px;width:640px">
+    <div class="lbl" style="margin-bottom:8px">Planta de luz (vista superior)</div>
+    <svg width="460" height="360">${K.plot}</svg>
+    <div class="lbl" style="margin:16px 0 8px">Especificações</div>
+    <div class="spec">${K.specs.map(([a,b])=>`<div><b>${a}</b>${b}</div>`).join('')}</div>
+    <div class="lbl" style="margin:14px 0 6px">Paleta da cena</div><div>${sw}</div>
+  </div>`;
+  window.__ready = true;
+});
+</script></body></html>
