@@ -1,0 +1,24 @@
+id: 20261126-lullia-c01-flagship
+brand: lullia
+module: motion_graphics
+brief:
+  objective: "Flagship 9:16 (40-55 s) driving B2B decision-makers to the free ICEIA diagnostic"
+  audience: "Directors/heads of marketing, communication, HR and sales at mid/large companies (BR, LATAM, US)"
+  language: pt
+  tone: "Premium, corporate, cinematic, confident"
+sources:
+  - { path: brands/lullia/assets-generated/brand-assets.js, sha256: null, role: overlay }   # official logo/fonts/tokens from lullia-site @ a642fd4
+rights:
+  owner: "LULLIA LTDA"
+  license: "owned (brand assets); Bodoni Moda + Jost under SIL OFL 1.1"
+  people_consent: na
+  music_license: null            # PENDING: licensed track (preview uses a synthesized temp score)
+outputs:
+  - { preset: vertical_1080, captions: burn, languages: [pt] }
+params:
+  composition: brands/lullia/campaigns/c01-ia-na-empresa/composition/index.html
+  renderer: motion/html-renderer/render.mjs
+  voiceover: null                # PENDING: professional PT-BR narration
+status: review                   # preview v001 = animatic, not a final deliverable
+approvals: []
+budget: { max_provider_cost_usd: 0 }

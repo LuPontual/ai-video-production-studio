@@ -1,0 +1,40 @@
+{
+  "repository": "LuPontual/lullia-site",
+  "commit": "a642fd4d028f4f2c08c3cdbde6b28afdf8bb7f17",
+  "logo_source": "index.html <a class=\"brand brand-oficial\"> (unmodified SVG markup)",
+  "fonts_source": "js/brief-fonts.js (Bodoni Moda, Jost — OFL 1.1)",
+  "fonts": [
+    "BodoniModa-Italic.ttf",
+    "BodoniModa-Medium.ttf",
+    "BodoniModa-Regular.ttf",
+    "Jost-Light.ttf",
+    "Jost-Medium.ttf",
+    "Jost-Regular.ttf"
+  ],
+  "tokens": {
+    "--nero": "#0F1419",
+    "--nero-2": "#151C23",
+    "--nero-3": "#1C242C",
+    "--black": "#0A0D10",
+    "--osso": "#EFEAE0",
+    "--osso-2": "#F5F1E9",
+    "--pedra": "#9B9B93",
+    "--pedra-d": "#5C5C55",
+    "--latao": "#A9834A",
+    "--latao-d": "#7B5E32",
+    "--latao-l": "#DCC08A",
+    "--line-n": "rgba(155,155,147,.18)",
+    "--line-o": "rgba(15,20,25,.14)",
+    "--foil": "linear-gradient(135deg,#A88650 0%,#EBD3A2 38%,#C09C62 62%,#E3C894 100%)",
+    "--display": "\"Bodoni Moda\",\"Didot\",\"Bodoni 72\",Georgia,serif",
+    "--sans": "\"Jost\",\"Futura\",\"Avenir Next\",\"Century Gothic\",system-ui,sans-serif",
+    "--t19": "19px",
+    "--t25": "25px",
+    "--t33": "33px",
+    "--t44": "44px",
+    "--t59": "59px",
+    "--t78": "78px",
+    "--wrap": "1280px",
+    "--gut": "clamp(16px,4vw,56px)"
+  }
+}

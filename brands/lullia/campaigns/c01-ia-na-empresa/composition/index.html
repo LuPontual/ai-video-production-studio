@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>LULLIA C01 — Flagship composition</title>
+<!-- Official brand assets (logo SVG, tokens, OFL fonts) synced unmodified from LuPontual/lullia-site -->
+<script src="../../../assets-generated/brand-assets.js"></script>
+<script src="timeline.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; -webkit-font-smoothing: antialiased; }
+  .layer { position: absolute; inset: 0; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .w { display: inline-block; white-space: pre; will-change: transform, opacity, filter; }
+  .lbl { font-family: var(--text); font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; }
+  .foil { background: var(--foil); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .it { font-style: italic; }
+  .chip { position: absolute; border: 1.5px solid var(--line); border-radius: 4px;
+          background: linear-gradient(160deg, rgba(239,234,224,0.06), rgba(239,234,224,0.015));
+          box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+          display: flex; align-items: center; justify-content: center; }
+  #captions { position: absolute; left: 90px; right: 90px; top: 1336px; text-align: center;
+              font-family: var(--text); font-weight: 500; font-size: 44px; line-height: 1.3;
+              color: var(--fg); text-shadow: 0 2px 18px rgba(0,0,0,0.9); }
+  #captions .cw { opacity: 0.45; }
+  #captions .cw.on { opacity: 1; }
+  #grain { position: absolute; inset: 0; opacity: 0.06; mix-blend-mode: screen; pointer-events: none; }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+              background: radial-gradient(ellipse 85% 70% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.6) 100%); }
+  .lockup { display: flex; align-items: center; }
+  .lockup svg { display: block; width: auto; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="bg" class="layer"></div>
+  <svg id="grid" class="layer" width="1080" height="1920"></svg>
+  <div id="scenes" class="layer"></div>
+  <div id="captions"></div>
+  <div id="grain"></div>
+  <div id="vignette"></div>
+</div>
+<script>
+(() => {
+  const TL = window.TIMELINE, K = TL.tokens, B = window.LULLIA_BRAND;
+  const stage = document.getElementById('stage');
+  [['--fg', K.fg], ['--text', K.fontText], ['--foil', K.foil], ['--line', K.line]].forEach(([k, v]) => stage.style.setProperty(k, v));
+  stage.style.fontFamily = K.fontDisplay; stage.style.color = K.fg;
+
+  // ---------- official fonts (OFL) from the site bundle ----------
+  const fontSpecs = [['Bodoni Moda', 'BodoniModa-Regular.ttf', 400, 'normal'], ['Bodoni Moda', 'BodoniModa-Medium.ttf', 500, 'normal'],
+    ['Bodoni Moda', 'BodoniModa-Italic.ttf', 400, 'italic'], ['Jost', 'Jost-Light.ttf', 300, 'normal'],
+    ['Jost', 'Jost-Regular.ttf', 400, 'normal'], ['Jost', 'Jost-Medium.ttf', 500, 'normal']];
+  const fontsLoaded = Promise.all(fontSpecs.map(([fam, file, weight, style]) => {
+    const bin = Uint8Array.from(atob(B.fonts[file]), c => c.charCodeAt(0));
+    const f = new FontFace(fam, bin.buffer, { weight: String(weight), style }); document.fonts.add(f); return f.load();
+  }));
+
+  // ---------- official logo lockup (unmodified SVG markup; proportions from site CSS 30/15/12) ----------
+  const lockup = (h) => { const L = B.logo.lockup_css, s = h / L.simbolo_height, d = document.createElement('div');
+    d.className = 'lockup'; d.style.gap = (L.gap * s) + 'px'; d.innerHTML = B.logo.simbolo + B.logo.lettering;
+    const [a, b] = d.querySelectorAll('svg'); a.style.height = h + 'px'; b.style.height = (L.lettering_height * s) + 'px'; return d; };
+
+  // ---------- helpers ----------
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const p = (t, a, b) => clamp((t - a) / (b - a));
+  const eo = x => 1 - Math.pow(1 - x, 3);
+  const eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+  const expo = x => x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  const lerp = (a, b, x) => a + (b - a) * x;
+  const rng = seed => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const el = (tag, css = '', html = '') => { const e = document.createElement(tag); e.style.cssText = css; e.innerHTML = html; return e; };
+  // words(): "*word*" -> foil accent, "_word_" -> italic
+  function words(parent, text, css = '') {
+    const box = el('div', css);
+    text.split('\n').forEach((line, li) => {
+      if (li) box.appendChild(document.createElement('br'));
+      line.split(' ').filter(Boolean).forEach((tok, i) => {
+        if (i) box.appendChild(document.createTextNode(' '));
+        const s = el('span'); s.className = 'w';
+        if (/^\*.*\*[.,:?]?$/.test(tok)) { s.classList.add('foil'); tok = tok.replace(/\*/g, ''); }
+        if (/^_.*_[.,:?]?$/.test(tok)) { s.classList.add('it'); tok = tok.replace(/_/g, ''); }
+        s.textContent = tok; box.appendChild(s);
+      });
+    });
+    parent.appendChild(box); return box;
+  }
+  function reveal(box, t, start, stagger = 0.09, dur = 0.6, rise = 30) {
+    box.querySelectorAll('.w').forEach((w, i) => {
+      const x = eo(p(t, start + i * stagger, start + i * stagger + dur));
+      w.style.opacity = x; w.style.transform = `translateY(${(1 - x) * rise}px)`; w.style.filter = x < 1 ? `blur(${(1 - x) * 10}px)` : 'none';
+    });
+  }
+  const env = (lt, d, fin = .35, fout = .3) => Math.min(fin ? eo(p(lt, 0, fin)) : 1, fout ? 1 - p(lt, d - fout, d) : 1);
+  const label = (e, txt, css) => { const l = el('div', css, txt); l.className = 'lbl'; e.appendChild(l); return l; };
+
+  // ---------- background ----------
+  const bg = document.getElementById('bg'), grid = document.getElementById('grid');
+  let gl = '';
+  for (let x = 0; x <= 1080; x += 90) gl += `<line x1="${x}" y1="-200" x2="${x}" y2="2100" />`;
+  for (let y = -180; y <= 2100; y += 90) gl += `<line x1="0" y1="${y}" x2="1080" y2="${y}" />`;
+  grid.innerHTML = `<g id="gl" stroke="${K.muted}" stroke-width="1">${gl}</g>`;
+  const gEl = grid.querySelector('#gl');
+  const grainTiles = [1, 2, 3, 4].map(s => { const c = document.createElement('canvas'); c.width = c.height = 256;
+    const g = c.getContext('2d'), im = g.createImageData(256, 256), r = rng(s * 7919);
+    for (let i = 0; i < im.data.length; i += 4) { const v = r() * 255; im.data[i] = im.data[i+1] = im.data[i+2] = v; im.data[i+3] = 255; }
+    g.putImageData(im, 0, 0); return c.toDataURL(); });
+  const grain = document.getElementById('grain');
+
+  // ---------- scenes ----------
+  const S = {}, root = document.getElementById('scenes');
+
+  S.S01 = { fin: 0, build(e) {
+      const r = rng(11), terms = ['IA', 'IA generativa', 'prompts', 'agentes', 'automação', 'copilotos', 'LLMs', 'chatbots',
+        'machine learning', 'dados', 'modelos', 'tendência', 'IA', 'algoritmos', 'hype', 'IA', 'novas ferramentas', 'assistentes',
+        'IA', 'futuro', 'inovação', 'IA', 'produtividade', 'IA', 'tecnologia', 'IA', 'aplicativos', 'IA'];
+      e.tokens = terms.map(txt => { let y = 170 + r() * 1100; if (y > 660) y += 360; if (y > 1290) y += 230; const s = el('div', `position:absolute;left:${60 + r() * 740}px;top:${y}px;font-size:${24 + r() * 20}px;color:${K.muted}`, txt);
+        s.className = 'lbl'; s.dx = (r() - .5) * 40; e.appendChild(s); return s; });
+      e.h = words(e, 'Todo mundo fala de\n_inteligência_ _artificial._', `position:absolute;left:0;right:0;top:740px;text-align:center;font-size:104px;font-weight:400;line-height:1.1`);
+    }, update(e, t) {
+      e.tokens.forEach((s, i) => { const a = eo(p(t, 0.05 + i * 0.06, 0.35 + i * 0.06)), out = eio(p(t, 2.45, 2.95));
+        s.style.opacity = a * (0.55 - 0.12 * (i % 3)) * (1 - out);
+        s.style.transform = `translate(${s.dx * t}px, ${-8 * t}px) scale(${1 - 0.15 * out})`; });
+      reveal(e.h, t, -0.12, 0.11, 0.45);
+      e.h.style.opacity = 1 - p(t, 2.7, 3.0);
+    } };
+
+  S.S02 = { build(e) {
+      e.a = words(e, '*Poucos*', `position:absolute;left:0;right:0;top:540px;text-align:center;font-size:250px;font-weight:400;line-height:1.1`);
+      e.b = words(e, 'sabem o que fazer com ela', `position:absolute;left:0;right:0;top:880px;text-align:center;font-family:${K.fontText};font-weight:300;font-size:60px;color:${K.muted}`);
+      e.c = words(e, '_dentro_ _de_ _uma_ _empresa._', `position:absolute;left:0;right:0;top:965px;text-align:center;font-size:84px;font-weight:400`);
+      e.u = el('div', `position:absolute;left:220px;top:1085px;height:3px;width:640px;background:${K.foil};transform-origin:left center`); e.appendChild(e.u);
+    }, update(e, t) {
+      const x = expo(p(t, 0, 0.6)); e.a.style.transform = `scale(${lerp(1.1, 1, x)})`; e.a.style.opacity = x; e.a.style.filter = `blur(${(1 - x) * 14}px)`;
+      reveal(e.b, t, 0.7, 0.08); reveal(e.c, t, 1.9, 0.1);
+      e.u.style.transform = `scaleX(${eio(p(t, 2.6, 3.3))})`;
+    } };
+
+  S.S03 = { build(e) {
+      e.label = label(e, 'uma pequena parte do que a IA pode oferecer', `position:absolute;left:60px;right:60px;top:310px;font-size:26px;color:${K.accentLight};text-align:center`);
+      e.cells = [];
+      for (let r = 0; r < 6; r++) for (let c = 0; c < 6; c++) { const k = el('div', `position:absolute;left:${90 + c * 153}px;top:${420 + r * 143}px;width:141px;height:131px;border:1.5px solid ${K.line};border-radius:3px`); e.appendChild(k); e.cells.push(k); }
+      e.group = el('div', `position:absolute;left:160px;top:625px;width:760px;height:510px;transform-origin:center center`); e.appendChild(e.group);
+      e.chips = ['Textos', 'Apresentações', 'Imagens'].map((txt, i) => { const c = el('div', `left:0;top:${i * 180}px;width:760px;height:150px;font-size:68px;font-weight:400`, txt); c.className = 'chip'; e.group.appendChild(c); return c; });
+    }, update(e, t) {
+      e.chips.forEach((c, i) => { const x = eo(p(t, 0.15 + i * 0.5, 0.75 + i * 0.5)); c.style.opacity = x; c.style.transform = `translateY(${(1 - x) * 50}px)`; });
+      const z = eio(p(t, 2.7, 4.1));
+      e.group.style.transform = `translate(${lerp(0, 160.5 - 540, z)}px, ${lerp(0, 485.5 - 880, z)}px) scale(${lerp(1, 0.17, z)})`;
+      e.chips.forEach(c => c.style.borderColor = z > 0.5 ? K.accent : K.line);
+      e.cells.forEach((k, i) => { const o = (i % 6 + Math.floor(i / 6)) * 0.07, x = eo(p(t, 2.9 + o, 3.5 + o)); k.style.opacity = i === 0 ? 0 : x; });
+      e.label.style.opacity = eo(p(t, 3.8, 4.4));
+    } };
+
+  S.S04 = { build(e) {
+      e.l = label(e, 'a verdadeira oportunidade', `position:absolute;left:96px;top:330px;font-size:26px;color:${K.accentLight}`);
+      e.h = words(e, 'transformar a maneira\ncomo as empresas', `position:absolute;left:96px;right:96px;top:400px;font-size:82px;font-weight:400;line-height:1.12`);
+      e.line = el('div', `position:absolute;left:112px;top:720px;width:2px;height:560px;background:${K.accent};transform-origin:top`); e.appendChild(e.line);
+      e.rows = ['vendem', 'atendem', 'decidem', 'crescem'].map((w, i) => { const r = el('div', `position:absolute;left:150px;top:${720 + i * 148}px;display:flex;align-items:baseline;gap:34px`,
+        `<span class="lbl" style="font-size:24px;color:${K.muted}">0${i + 1}</span><span class="${i === 3 ? 'foil' : ''}" style="font-size:128px;font-style:italic;font-weight:400;line-height:1">${w}</span>`); e.appendChild(r); return r; });
+    }, update(e, t) {
+      e.l.style.opacity = eo(p(t, 0.05, 0.5)); reveal(e.h, t, 0.6, 0.12);
+      const at = [4.5, 5.1, 5.9, 6.7];
+      e.rows.forEach((r, i) => { const x = expo(p(t, at[i], at[i] + 0.5)); r.style.opacity = i === 3 ? x : x * lerp(1, .5, p(t, at[i] + .6, at[i] + 1.2)); r.style.transform = `translateX(${(1 - x) * 60}px)`; });
+      e.line.style.transform = `scaleY(${eio(p(t, 4.4, 7.2))})`;
+    } };
+
+  S.S05 = { build(e) {
+      e.h = words(e, 'Mas existe uma pergunta\nque quase ninguém faz:', `position:absolute;left:0;right:0;top:830px;text-align:center;font-family:${K.fontText};font-size:62px;font-weight:300;line-height:1.3;color:${K.muted}`);
+    }, update(e, t) { reveal(e.h, t, 0.1, 0.17, 0.6, 18); } };
+
+  S.S06 = { fin: 0.12, build(e) {
+      e.h = words(e, 'Por onde\n*começar?*', `position:absolute;left:0;right:0;top:620px;text-align:center;font-size:210px;font-weight:400;line-height:1.08`);
+      e.h.querySelectorAll('.w')[2].classList.add('it');
+      e.dot = el('div', `position:absolute;left:526px;top:1150px;width:28px;height:28px;border-radius:50%;background:${K.accentLight};box-shadow:0 0 60px 20px rgba(220,192,138,.35)`); e.appendChild(e.dot);
+    }, update(e, t) {
+      reveal(e.h, t, 0, 0.12, 0.35, 20);
+      const x = eo(p(t, 0.5, 1.0)), pulse = 0.85 + 0.15 * Math.sin(t * 5);
+      e.dot.style.opacity = x; e.dot.style.transform = `scale(${x * pulse})`;
+    } };
+
+  S.S07 = { build(e) {
+      e.a = words(e, 'A resposta não está em', `position:absolute;left:96px;right:96px;top:380px;font-family:${K.fontText};font-size:56px;font-weight:300;color:${K.muted}`);
+      e.b = words(e, 'adotar mais\nferramentas.', `position:absolute;left:96px;right:96px;top:455px;font-size:100px;font-weight:400;line-height:1.1`);
+      e.strike = el('div', `position:absolute;left:90px;top:628px;width:590px;height:4px;background:${K.foil};transform-origin:left`); e.appendChild(e.strike);
+      const r = rng(5), labels = ['Ferramenta', 'App', 'Plugin', 'Assinatura', 'Integração', 'Dashboard', 'Extensão', 'Plataforma', 'Bot', 'Template', 'Licença', 'Add-on'];
+      e.chips = labels.map(txt => { const c = el('div', `left:${80 + r() * 600}px;top:${760 + r() * 460}px;padding:0 34px;height:92px;font-family:${K.fontText};font-size:34px;font-weight:400;letter-spacing:.06em`, txt);
+        c.className = 'chip'; c.rot = (r() - .5) * 14; e.appendChild(c); return c; });
+    }, update(e, t) {
+      reveal(e.a, t, 0.05, 0.08); reveal(e.b, t, 0.6, 0.1);
+      const fall = eio(p(t, 2.3, 3.1));
+      e.chips.forEach((c, i) => { const x = expo(p(t, 0.4 + i * 0.13, 0.8 + i * 0.13));
+        c.style.opacity = x * lerp(1, 0.12, fall); c.style.transform = `translateY(${(1 - x) * -80 + fall * 60}px) rotate(${c.rot}deg) scale(${lerp(.8, 1, x)})`; });
+      e.strike.style.transform = `scaleX(${eio(p(t, 2.1, 2.6))})`;
+    } };
+
+  // The five real ICEIA™ dimensions, as published on lullia.com.br (#iceia).
+  S.S08 = { build(e) {
+      e.a = words(e, 'Identificar onde a IA gera', `position:absolute;left:96px;right:96px;top:350px;font-family:${K.fontText};font-size:56px;font-weight:300;color:${K.muted}`);
+      e.b = words(e, '_maior_ _impacto_\nno negócio.', `position:absolute;left:96px;right:96px;top:425px;font-size:100px;font-weight:400;line-height:1.05`);
+      const dims = [['I', 'Inteligência de Decisão'], ['C', 'Cliente & Receita'], ['E', 'Experiência & Engajamento'], ['I', 'Influência de Mercado'], ['A', 'Adoção de IA & Transformação']];
+      const lv = [0.62, 0.92, 0.48, 0.55, 0.74];
+      e.rows = dims.map(([L, n], i) => { const r = el('div', `position:absolute;left:96px;width:888px;top:${700 + i * 122}px;height:104px;border-bottom:1.5px solid ${K.line};display:flex;align-items:center;gap:30px`,
+        `<span class="L" style="font-size:78px;width:64px;text-align:center;line-height:1">${L}</span>
+         <div style="flex:1"><div class="lbl" style="font-size:24px;letter-spacing:.16em;margin-bottom:16px">${n}</div>
+         <div style="height:4px;background:rgba(155,155,147,.15)"><div class="bar" style="height:100%;width:0;background:${K.foil}"></div></div></div>`);
+        r.lv = lv[i]; e.appendChild(r); return r; });
+      e.scan = el('div', `position:absolute;left:60px;right:60px;top:0;height:2px;background:${K.accentLight};box-shadow:0 0 30px 6px rgba(220,192,138,.45)`); e.appendChild(e.scan);
+      e.tag = label(e, 'principal oportunidade', `position:absolute;left:770px;top:832px;font-size:18px;color:${K.bg};background:${K.accentLight};padding:6px 12px;letter-spacing:.14em`);
+    }, update(e, t) {
+      reveal(e.a, t, 0.05, 0.08); reveal(e.b, t, 0.7, 0.12);
+      const sy = lerp(690, 1320, eio(p(t, 1.3, 3.3)));
+      e.scan.style.top = sy + 'px'; e.scan.style.opacity = p(t, 1.2, 1.4) * (1 - p(t, 3.3, 3.6));
+      const hi = eo(p(t, 3.5, 4.0));
+      e.rows.forEach((r, i) => { const top = 700 + i * 122, appear = eo(p(t, 0.9 + i * 0.1, 1.4 + i * 0.1));
+        r.querySelector('.bar').style.width = (eo(p(sy, top, top + 104)) * r.lv * 100) + '%';
+        r.style.opacity = appear * (i === 1 ? 1 : lerp(1, 0.4, hi));
+        r.querySelector('.L').className = 'L' + (i === 1 && hi > 0.5 ? ' foil' : ''); });
+      e.tag.style.opacity = hi;
+    } };
+
+  S.S09 = { build(e) {
+      let rings = ''; [170, 260, 350, 440, 530].forEach((r, i) => rings += `<circle cx="540" cy="900" r="${r}" fill="none" stroke="${K.accent}" stroke-opacity="${0.45 - i * 0.07}" stroke-width="1.5" stroke-dasharray="${i % 2 ? '3 14' : '220 40'}"/>`);
+      e.rings = el('div', 'position:absolute;inset:0', `<svg width="1080" height="1920">${rings}</svg>`); e.appendChild(e.rings);
+      e.a = words(e, 'É exatamente essa a proposta do', `position:absolute;left:0;right:0;top:640px;text-align:center;font-family:${K.fontText};font-size:48px;font-weight:300;color:${K.muted}`);
+      e.logo = el('div', `position:absolute;left:0;right:0;top:770px;text-align:center;font-size:220px;font-weight:400;line-height:1.1`, '<span class="foil">ICEIA</span><span style="font-size:64px;vertical-align:top;color:' + K.accentLight + '">™</span>'); e.appendChild(e.logo);
+      e.b = words(e, '_o_ _diagnóstico_ _estratégico_\nda LULLIA', `position:absolute;left:0;right:0;top:1060px;text-align:center;font-size:62px;font-weight:400;line-height:1.2`);
+    }, update(e, t) {
+      reveal(e.a, t, 0.05, 0.08);
+      const x = expo(p(t, 1.8, 2.8));
+      e.logo.style.opacity = p(t, 1.8, 2.1); e.logo.style.letterSpacing = lerp(0.4, 0.04, x) + 'em';
+      e.logo.style.filter = x < 1 ? `blur(${(1 - x) * 16}px)` : 'none';
+      reveal(e.b, t, 2.9, 0.1);
+      e.rings.style.opacity = eo(p(t, 1.8, 2.8)); e.rings.style.transform = `rotate(${t * 4}deg) scale(${lerp(0.85, 1, eo(p(t, 1.8, 3.2)))})`;
+    } };
+
+  S.S10 = { build(e) {
+      e.a = words(e, 'Descubra onde estão', `position:absolute;left:96px;right:96px;top:420px;font-family:${K.fontText};font-size:56px;font-weight:300;color:${K.muted}`);
+      e.b = words(e, 'as principais\n*oportunidades*', `position:absolute;left:96px;right:96px;top:495px;font-size:124px;font-weight:400;line-height:1.05`);
+      e.c = words(e, '_de_ _evolução_ _da_ _sua_ _empresa._', `position:absolute;left:96px;right:96px;top:785px;font-size:64px;font-weight:400`);
+      const pts = [[260, 1020], [690, 1090], [470, 1240]];
+      e.net = el('div', 'position:absolute;inset:0', `<svg width="1080" height="1920"><polyline points="${pts.map(q => q.join(',')).join(' ')} ${pts[0].join(',')}" fill="none" stroke="${K.accent}" stroke-opacity=".7" stroke-width="2" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>${pts.map(q => `<circle cx="${q[0]}" cy="${q[1]}" r="12" fill="${K.accentLight}"/>`).join('')}</svg>`);
+      e.appendChild(e.net);
+    }, update(e, t) {
+      reveal(e.a, t, 0.05, 0.08); reveal(e.b, t, 0.7, 0.14); reveal(e.c, t, 2.1, 0.08);
+      e.net.querySelectorAll('circle').forEach((c, i) => { const x = expo(p(t, 1.4 + i * 0.35, 1.9 + i * 0.35)); c.setAttribute('r', 12 * x * (0.9 + 0.1 * Math.sin(t * 4 + i))); });
+      e.net.querySelector('polyline').style.strokeDashoffset = 1 - eio(p(t, 2.2, 3.6));
+    } };
+
+  S.S11 = { build(e) {
+      e.logo = el('div', 'position:absolute;left:0;right:0;top:700px;display:flex;justify-content:center'); e.logo.appendChild(lockup(150)); e.appendChild(e.logo);
+      e.tag = ['Intelligence.', 'Strategy.', 'Business Impact.'].map((w, i) => { const s = el('div', `position:absolute;left:0;right:0;top:${960 + i * 92}px;text-align:center;font-size:72px;font-weight:400;${i === 2 ? 'font-style:italic' : ''}`, i === 2 ? `<span class="foil">${w}</span>` : w); e.appendChild(s); return s; });
+    }, update(e, t) {
+      const x = eo(p(t, 0, 0.7)); e.logo.style.opacity = x; e.logo.style.transform = `scale(${lerp(0.94, 1, x)})`;
+      e.tag.forEach((s, i) => { const y = eo(p(t, 0.7 + i * 0.5, 1.2 + i * 0.5)); s.style.opacity = y; s.style.transform = `translateY(${(1 - y) * 30}px)`; s.style.filter = y < 1 ? `blur(${(1 - y) * 8}px)` : 'none'; });
+    } };
+
+  S.S12 = { fout: 0.45, build(e) {
+      e.logo = el('div', 'position:absolute;left:0;right:0;top:360px;display:flex;justify-content:center'); e.logo.appendChild(lockup(76)); e.appendChild(e.logo);
+      e.a = words(e, 'Faça o *ICEIA™*\n_gratuitamente_', `position:absolute;left:0;right:0;top:640px;text-align:center;font-size:124px;font-weight:400;line-height:1.1`);
+      e.pill = el('div', `position:absolute;left:200px;width:680px;top:1010px;height:124px;border:2px solid ${K.accentLight};display:flex;align-items:center;justify-content:center;gap:24px;font-family:${K.fontText};font-size:54px;font-weight:400;letter-spacing:.04em`,
+        `<span>lullia.com.br</span><span style="color:${K.accentLight}">→</span>`); e.appendChild(e.pill);
+    }, update(e, t) {
+      e.logo.style.opacity = eo(p(t, 0, 0.5)); reveal(e.a, t, 0.2, 0.12);
+      const x = expo(p(t, 1.0, 1.6)), glow = 0.5 + 0.5 * Math.sin((t - 1.6) * 3);
+      e.pill.style.opacity = x; e.pill.style.transform = `scale(${lerp(0.92, 1, x)})`;
+      e.pill.style.boxShadow = `0 0 ${30 + 30 * glow * p(t, 1.6, 2)}px rgba(220,192,138,${0.2 * p(t, 1.6, 2)})`;
+    } };
+
+  const scenes = TL.scenes.map(s => { const def = S[s.id], e = el('div'); e.className = 'scene'; root.appendChild(e); def.build(e); return { ...s, def, e }; });
+
+  // ---------- captions (planned timing; re-synced from VO transcript in production) ----------
+  const cues = [];
+  scenes.forEach(s => {
+    const ws = s.vo.split(/\s+/).filter(Boolean), d = s.end - s.start;
+    const v0 = s.start + 0.1, v1 = s.start + Math.min(ws.length / 2.5 + 0.2, d - 0.15);
+    const wt = ws.map(w => w.length + 2), tot = wt.reduce((a, b) => a + b, 0);
+    let acc = 0; const times = ws.map((w, i) => { const t0 = v0 + (v1 - v0) * acc / tot; acc += wt[i]; return t0; });
+    let cur = []; const flush = () => { if (cur.length) cues.push({ words: cur, scene: s }); cur = []; };
+    ws.forEach((w, i) => {
+      if (cur.length && cur.map(x => x.w).join(' ').length + w.length + 1 > 30) flush();
+      cur.push({ w, t: times[i] });
+      if (/[,.:?—]$/.test(w) && cur.length >= 2) flush();
+    });
+    flush();
+  });
+  cues.forEach((c, i) => { c.start = c.words[0].t; const nx = cues[i + 1];
+    c.end = nx && nx.scene === c.scene ? nx.start : Math.min(c.scene.end - 0.05, c.words[c.words.length - 1].t + 0.9); });
+  const capEl = document.getElementById('captions');
+  let lastCue = null;
+  function captionsAt(t) {
+    const c = cues.find(c => t >= c.start && t < c.end);
+    if (c !== lastCue) { capEl.innerHTML = c ? c.words.map(x => `<span class="cw">${x.w}</span>`).join(' ') : ''; lastCue = c; }
+    if (c) { capEl.querySelectorAll('.cw').forEach((s, i) => s.classList.toggle('on', t >= c.words[i].t)); capEl.style.opacity = eo(p(t, c.start, c.start + 0.08)); }
+  }
+  const fmt = t => { const ms = Math.round(t * 1000), h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, s = Math.floor(ms / 1000) % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')},${String(ms % 1000).padStart(3, '0')}`; };
+
+  // ---------- seek ----------
+  function seek(t) {
+    const f = Math.round(t * TL.fps);
+    bg.style.background = `radial-gradient(ellipse 70% 45% at ${50 + 18 * Math.sin(t * 0.13)}% ${38 + 8 * Math.cos(t * 0.1)}%, rgba(169,131,74,0.10), rgba(169,131,74,0) 70%), linear-gradient(180deg, ${K.bg}, ${K.deep})`;
+    const quiet = (t > 21.4 && t < 27.0) ? 0.35 : 1;
+    gEl.setAttribute('stroke-opacity', 0.07 * quiet);
+    gEl.setAttribute('transform', `translate(0, ${-((t * 9) % 90)})`);
+    grain.style.backgroundImage = `url(${grainTiles[f % 4]})`;
+    grain.style.backgroundPosition = `${(f * 37) % 256}px ${(f * 61) % 256}px`;
+    scenes.forEach(s => {
+      const d = s.end - s.start, lt = t - s.start;
+      if (lt < 0 || lt > d) { s.e.style.opacity = 0; s.e.style.visibility = 'hidden'; return; }
+      s.e.style.visibility = 'visible';
+      s.e.style.opacity = env(lt, d, s.def.fin ?? 0.35, s.def.fout ?? 0.3);
+      s.def.update(s.e, lt, d);
+    });
+    captionsAt(t);
+  }
+
+  window.__composition = {
+    fps: TL.fps, width: TL.width, height: TL.height, duration: TL.duration, hits: TL.hits, seek,
+    ready: fontsLoaded.then(() => document.fonts.ready).then(() => { seek(0); return true; }),
+    srt: () => cues.map((c, i) => `${i + 1}\n${fmt(c.start)} --> ${fmt(c.end)}\n${c.words.map(x => x.w).join(' ')}\n`).join('\n'),
+    cues: () => cues.map(c => ({ start: c.start, end: c.end, text: c.words.map(x => x.w).join(' ') }))
+  };
+})();
+</script>
+</body>
+</html>
