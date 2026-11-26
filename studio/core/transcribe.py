@@ -51,7 +51,14 @@ def main():
     prompt = None
     if a.script:
         prompt = Path(a.script).read_text(encoding="utf-8")[:800]  # biases spelling of brand terms
-    segs, info = model.transcribe(a.audio, language=a.lang, word_timestamps=True, vad_filter=True,
+    # Decode with system FFmpeg (16 kHz mono float32) instead of PyAV: the PyAV build pulled in by faster-whisper 1.2.1
+    # here rejects faster-whisper's own open() arguments; FFmpeg is the studio's validated media engine anyway.
+    import subprocess
+    import numpy as np
+    pcm = subprocess.run(["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error", "-i", a.audio, "-f", "f32le", "-ac", "1", "-ar", "16000", "-"],
+                         capture_output=True, check=True).stdout
+    audio = np.frombuffer(pcm, dtype=np.float32)
+    segs, info = model.transcribe(audio, language=a.lang, word_timestamps=True, vad_filter=True,
                                   initial_prompt=prompt, beam_size=5)
     segments, words = [], []
     for s in segs:
