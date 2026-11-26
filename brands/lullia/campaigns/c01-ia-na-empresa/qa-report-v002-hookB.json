@@ -1,0 +1,105 @@
+{
+  "file": "jobs/20261126-lullia-c01-hookB/renders/v002/lullia_c01_hookB_preview_v002_9x16.mp4",
+  "preset": "vertical_1080",
+  "generated_at": "2026-11-26T04:27:07+00:00",
+  "result": "pass",
+  "blocking_failures": 0,
+  "warnings": 0,
+  "checks": [
+    {
+      "check": "video_codec",
+      "status": "pass",
+      "detail": "h264"
+    },
+    {
+      "check": "resolution",
+      "status": "pass",
+      "detail": "1080x1920 (expected 1080x1920)"
+    },
+    {
+      "check": "pixel_format",
+      "status": "pass",
+      "detail": "yuv420p"
+    },
+    {
+      "check": "frame_rate",
+      "status": "pass",
+      "detail": "30.000 fps"
+    },
+    {
+      "check": "duration",
+      "status": "pass",
+      "detail": "52.600s (expected 52.6s)"
+    },
+    {
+      "check": "faststart",
+      "status": "pass",
+      "detail": "set by renderer (+faststart)"
+    },
+    {
+      "check": "audio_codec",
+      "status": "pass",
+      "detail": "aac 48000 Hz 2ch"
+    },
+    {
+      "check": "av_duration_sync",
+      "status": "pass",
+      "detail": "video 52.600s / audio 52.600s"
+    },
+    {
+      "check": "integrated_loudness",
+      "status": "pass",
+      "detail": "-14.1 LUFS (target -14.0 ±1.0)"
+    },
+    {
+      "check": "true_peak",
+      "status": "pass",
+      "detail": "-1.0 dBTP (max -1.0)"
+    },
+    {
+      "check": "black_segments",
+      "status": "pass",
+      "detail": "none"
+    },
+    {
+      "check": "frozen_segments",
+      "status": "pass",
+      "detail": "none"
+    },
+    {
+      "check": "captions_well_formed",
+      "status": "pass",
+      "detail": "0 malformed cue block(s)"
+    },
+    {
+      "check": "captions_count",
+      "status": "pass",
+      "detail": "34 cues"
+    },
+    {
+      "check": "captions_min_duration",
+      "status": "pass",
+      "detail": "0 cue(s) < 0.3s"
+    },
+    {
+      "check": "captions_max_duration",
+      "status": "pass",
+      "detail": "0 cue(s) > 7.0s"
+    },
+    {
+      "check": "captions_overlap",
+      "status": "pass",
+      "detail": "0 overlap(s)"
+    },
+    {
+      "check": "captions_within_video",
+      "status": "pass",
+      "detail": "0 cue(s) beyond video end"
+    },
+    {
+      "check": "captions_line_length",
+      "status": "pass",
+      "detail": "0 cue(s) exceed 32 chars/line or 2 lines"
+    }
+  ]
+}

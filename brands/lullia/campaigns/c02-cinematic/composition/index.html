@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>LULLIA C02 — O ponto de maior impacto</title>
+<script src="../../../assets-generated/brand-assets.js"></script>
+<script src="timeline.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; }
+  #stage { position: relative; overflow: hidden; -webkit-font-smoothing: antialiased; }
+  .layer { position: absolute; inset: 0; }
+  canvas.layer { display: block; }
+  .scene { position: absolute; inset: 0; opacity: 0; }
+  .w { display: inline-block; white-space: pre; }
+  .lbl { font-family: var(--text); font-weight: 400; letter-spacing: 0.24em; text-transform: uppercase; }
+  .foil { background: var(--foil); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .it { font-style: italic; }
+  .ctr { position: absolute; left: 0; right: 0; text-align: center; }
+  #captions { position: absolute; left: 8%; right: 8%; text-align: center; font-family: var(--text); font-weight: 500;
+              line-height: 1.3; color: var(--fg); text-shadow: 0 2px 18px rgba(0,0,0,0.95); }
+  #captions .cw { opacity: 0.45; } #captions .cw.on { opacity: 1; }
+  #grain { position: absolute; inset: 0; opacity: 0.055; mix-blend-mode: screen; pointer-events: none; }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+              background: radial-gradient(ellipse 80% 72% at 50% 48%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.72) 100%); }
+  .lockup { display: flex; align-items: center; } .lockup svg { display: block; width: auto; }
+  .chapter { position: absolute; display: flex; align-items: center; gap: 18px; color: var(--al); }
+  .chapter i { display: block; height: 1.5px; background: var(--al); transform-origin: left; }
+  .tag { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl" class="layer"></canvas>
+  <div id="scenes" class="layer"></div>
+  <div id="captions"></div>
+  <div id="grain"></div>
+  <div id="vignette"></div>
+</div>
+<script>
+(() => {
+  const TL = window.TIMELINE, K = TL.tokens, B = window.LULLIA_BRAND, W = TL.width, H = TL.height;
+  const V = H > W;                                  // vertical layout
+  const s = Math.min(W, H) / 1080;                  // type scale
+  const L = (v9, v16) => V ? v9 : v16;
+  const stage = document.getElementById('stage');
+  stage.style.width = W + 'px'; stage.style.height = H + 'px';
+  [['--fg', K.fg], ['--text', K.fontText], ['--foil', K.foil], ['--al', K.accentLight]].forEach(([k, v]) => stage.style.setProperty(k, v));
+  stage.style.fontFamily = K.fontDisplay; stage.style.color = K.fg;
+
+  // ---------- official fonts + logo (unmodified) ----------
+  const fontsLoaded = Promise.all([['Bodoni Moda', 'BodoniModa-Regular.ttf', 400, 'normal'], ['Bodoni Moda', 'BodoniModa-Medium.ttf', 500, 'normal'],
+    ['Bodoni Moda', 'BodoniModa-Italic.ttf', 400, 'italic'], ['Jost', 'Jost-Light.ttf', 300, 'normal'], ['Jost', 'Jost-Regular.ttf', 400, 'normal'],
+    ['Jost', 'Jost-Medium.ttf', 500, 'normal']].map(([fam, file, weight, style]) => {
+      const f = new FontFace(fam, Uint8Array.from(atob(B.fonts[file]), c => c.charCodeAt(0)).buffer, { weight: String(weight), style });
+      document.fonts.add(f); return f.load(); }));
+  const lockup = h => { const Lc = B.logo.lockup_css, k = h / Lc.simbolo_height, d = document.createElement('div');
+    d.className = 'lockup'; d.style.gap = (Lc.gap * k) + 'px'; d.innerHTML = B.logo.simbolo + B.logo.lettering;
+    const [a, b] = d.querySelectorAll('svg'); a.style.height = h + 'px'; b.style.height = (Lc.lettering_height * k) + 'px'; return d; };
+
+  // ---------- math ----------
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const p = (t, a, b) => clamp((t - a) / (b - a));
+  const eo = x => 1 - Math.pow(1 - x, 3), eio = x => x < .5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+  const sstep = x => x * x * (3 - 2 * x);
+  const lerp = (a, b, x) => a + (b - a) * x;
+  const v3 = { add: (a, b) => [a[0]+b[0], a[1]+b[1], a[2]+b[2]], sub: (a, b) => [a[0]-b[0], a[1]-b[1], a[2]-b[2]],
+    mul: (a, k) => [a[0]*k, a[1]*k, a[2]*k], dot: (a, b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2],
+    cross: (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]],
+    len: a => Math.hypot(a[0], a[1], a[2]), norm: a => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0]/l, a[1]/l, a[2]/l]; },
+    mix: (a, b, x) => [lerp(a[0], b[0], x), lerp(a[1], b[1], x), lerp(a[2], b[2], x)] };
+  const rng = seed => () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+  const gauss = r => () => { let u = 0; for (let i = 0; i < 4; i++) u += r(); return (u - 2) / 0.58; };
+
+  // ---------- world ----------
+  const R = rng(20261126), G = gauss(R);
+  const NC = 6, CR = 8.5;
+  const clusterBase = [...Array(NC)].map((_, i) => { const a = (i * 60 + 15) * Math.PI / 180; return [CR * Math.cos(a), (R() - .5) * 2.4, CR * Math.sin(a)]; });
+  const clusterOrdered = [...Array(NC)].map((_, i) => { const a = (i * 60 + 15) * Math.PI / 180; return [CR * Math.cos(a), 0, CR * Math.sin(a)]; });
+  const OPP = 4;
+  const pts = [];        // cluster points
+  for (let c = 0; c < NC; c++) for (let i = 0; i < 210; i++) {
+    const off = [G() * 0.75, G() * 0.55, G() * 0.75];
+    pts.push({ c, off, scat: [(R() - .5) * 34, (R() - .5) * 15, (R() - .5) * 22], vel: v3.norm([R() - .5, (R() - .5) * .6, R() - .5]),
+               tw: R() * 6.28, b: 0.35 + R() * 0.5, sz: 0.035 + R() * 0.03 });
+  }
+  const dust = [...Array(1100)].map(() => ({ p: [(R() - .5) * 90, (R() - .5) * 50, -20 - R() * 60 + (R() - .5) * 40], b: 0.08 + R() * 0.18, sz: 0.05 + R() * 0.08 }));
+  const packets = [];
+  for (let c = 0; c < NC; c++) for (let i = 0; i < 16; i++) packets.push({ c, ph: R(), sp: 0.6 + R() * 0.8, tilt: R() * 3.14, r: 0.7 + R() * 0.6 });
+  const bez = (a, c1, b, u) => { const m = 1 - u; return [m*m*a[0] + 2*m*u*c1[0] + u*u*b[0], m*m*a[1] + 2*m*u*c1[1] + u*u*b[1], m*m*a[2] + 2*m*u*c1[2] + u*u*b[2]]; };
+
+  // ---------- sprites ----------
+  const sprite = (rgb, hard) => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d');
+    const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, `rgba(${rgb},1)`); gr.addColorStop(hard ? 0.55 : 0.25, `rgba(${rgb},${hard ? 0.85 : 0.5})`); gr.addColorStop(1, `rgba(${rgb},0)`);
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return c; };
+  const SP = { osso: sprite('239,234,224'), latao: sprite('220,192,138'), brass: sprite('169,131,74'), pedra: sprite('155,155,147'),
+               bokehL: sprite('220,192,138', true), bokehO: sprite('239,234,224', true) };
+
+  // ---------- camera ----------
+  const resolvePose = (P, clusters) => {
+    if (P.pos) return { pos: P.pos, look: P.look, focus: P.focus };
+    const C = P.c === 'center' ? [0, 0, 0] : clusters[P.c];
+    if (P.frac !== undefined) { const pos = v3.mul(C, P.frac); pos[1] += 1.0 + (P.lift || 0);
+      if (P.side) { const pr = v3.norm(v3.cross(C, [0, 1, 0])); pos[0] += pr[0] * P.side; pos[2] += pr[2] * P.side; }
+      return { pos, look: C, focus: P.focus }; }
+    return { pos: v3.add(C, P.off), look: C };
+  };
+  const cv = document.getElementById('gl'); cv.width = W; cv.height = H; const g = cv.getContext('2d');
+  const F = Math.min(W, H) * 1.05;   // focal length in px
+  function camera(pos, look) { const f = v3.norm(v3.sub(look, pos)), r = v3.norm(v3.cross(f, [0, 1, 0])), u = v3.cross(r, f); return { pos, f, r, u }; }
+  const project = (cam, P) => { const d = v3.sub(P, cam.pos), z = v3.dot(d, cam.f); if (z < 0.15) return null;
+    return [W / 2 + v3.dot(d, cam.r) / z * F, H / 2 - v3.dot(d, cam.u) / z * F, z]; };
+
+  // ---------- state over time ----------
+  const KEYS = ['scatter', 'drift', 'broken', 'connect', 'flow', 'center', 'opp', 'oppPoint', 'loopHi', 'scan', 'order', 'pillars', 'dims', 'dimAll'];
+  const sceneStates = []; { let cur = Object.fromEntries(KEYS.map(k => [k, 0]));
+    TL.scenes.forEach((sc, i) => { if (sc.init) cur = { ...cur, ...sc.init }; const from = { ...cur }; cur = { ...cur, ...(sc.state || {}) }; sceneStates.push({ from, to: { ...cur } }); }); }
+  const sceneAt = t => { let i = TL.scenes.findIndex(sc => t < sc.end); if (i < 0) i = TL.scenes.length - 1; return i; };
+  function stateAt(t) {
+    const i = sceneAt(t), sc = TL.scenes[i], lt = (t - sc.start) / sc.dur, [a, b] = sc.ramp || [0, 1], x = sstep(p(lt, a, b)), S = {};
+    KEYS.forEach(k => S[k] = lerp(sceneStates[i].from[k], sceneStates[i].to[k], x));
+    S.scene = sc; S.lt = lt; return S;
+  }
+  // H1 displacement integrals (closed-form by fixed-step sum; deterministic)
+  function driftInt(t) { let s1 = 0, s2 = 0; const dt = 1 / 60; for (let x = 0; x < t; x += dt) { const d = stateAt(x).drift; s1 += (1 - d) * dt; s2 += d * dt; } return [s1, s2]; }
+
+  function cameraAt(t, clusters) {
+    const i = sceneAt(t), sc = TL.scenes[i];
+    const prev = i > 0 ? TL.scenes[i - 1] : null;
+    const fromP = sc.from || (prev ? prev.to : sc.to);
+    const A = resolvePose(fromP, clusters), Bp = resolvePose(sc.to, clusters);
+    const x = eio(clamp((t - sc.start) / sc.dur));
+    const pos = v3.mix(A.pos, Bp.pos, x), look = v3.mix(A.look, Bp.look, x);
+    const focus = lerp(A.focus || v3.len(v3.sub(A.look, A.pos)), Bp.focus || v3.len(v3.sub(Bp.look, Bp.pos)), x);
+    return { ...camera(pos, look), focus };
+  }
+
+  // ---------- render world ----------
+  function drawPoint(cam, P, size, bright, spr, aperture) {
+    const q = project(cam, P); if (!q) return null;
+    const [x, y, z] = q; if (x < -200 || x > W + 200 || y < -200 || y > H + 200) return q;
+    const base = Math.max(1.2, size * F / z);
+    const coc = aperture * Math.abs(1 / cam.focus - 1 / z) * F;
+    const r = Math.min(Math.max(base, coc), 150 * s);
+    let a = bright * Math.min(1, Math.pow(base / r, 1.6) * 1.3) * clamp((z - 0.35) / 1.6);
+    if (r > 40 * s) a *= 40 * s / r;
+    if (a < 0.004) return q;
+    g.globalAlpha = Math.min(1, a);
+    g.drawImage(r > base * 2.2 ? (spr === SP.latao || spr === SP.brass ? SP.bokehL : SP.bokehO) : spr, x - r * 2, y - r * 2, r * 4, r * 4);
+    return q;
+  }
+
+  function renderWorld(t) {
+    const S = stateAt(t);
+    const rot = t * 0.012 + S.order * 0.15;
+    const ca = Math.cos(rot), sa = Math.sin(rot);
+    const R3 = P => [P[0] * ca - P[2] * sa, P[1], P[0] * sa + P[2] * ca];
+    const clusters = clusterBase.map((c, i) => R3(v3.mix(c, clusterOrdered[i], S.order)));
+    const cam = cameraAt(t, clusters);
+    const aperture = 0.055;
+
+    // background: nero gradient + moving brass key light + soft shafts
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    const bgg = g.createLinearGradient(0, 0, 0, H); bgg.addColorStop(0, K.bg); bgg.addColorStop(1, K.deep); g.fillStyle = bgg; g.fillRect(0, 0, W, H);
+    const lx = W * (0.5 + 0.22 * Math.sin(t * 0.11)), ly = H * (0.32 + 0.06 * Math.cos(t * 0.09));
+    const kl = g.createRadialGradient(lx, ly, 0, lx, ly, Math.max(W, H) * 0.7); kl.addColorStop(0, 'rgba(169,131,74,0.16)'); kl.addColorStop(1, 'rgba(169,131,74,0)');
+    g.fillStyle = kl; g.fillRect(0, 0, W, H);
+    g.globalCompositeOperation = 'lighter';
+    for (let k = 0; k < 3; k++) { g.save(); g.translate(-W * 0.1, -H * 0.05); g.rotate(0.5 + k * 0.09 + 0.03 * Math.sin(t * 0.2 + k));
+      const sh = g.createLinearGradient(0, 0, Math.max(W, H) * 1.6, 0); sh.addColorStop(0, 'rgba(220,192,138,0.05)'); sh.addColorStop(1, 'rgba(220,192,138,0)');
+      g.fillStyle = sh; g.fillRect(0, -40 * s - k * 70 * s, Math.max(W, H) * 1.6, (30 + k * 26) * s); g.restore(); }
+
+    const dim = 1 - 0.75 * S.dimAll;
+    dust.forEach(d => drawPoint(cam, R3(d.p), d.sz, d.b * dim, SP.pedra, aperture * 0.4));
+
+    // H1 drift displacement
+    let disp = null; if (S.scatter > 0.001) disp = driftInt(t);
+    const A = v3.norm([1, 0.12, 0.25]);
+    const scanX = lerp(-14, 14, eio(p(S.lt, 0.1, 0.85))) ;
+    pts.forEach((q, idx) => {
+      let P = v3.add(clusters[q.c], q.off);
+      if (S.scatter > 0.001) { const sp = v3.add(v3.add(q.scat, v3.mul(q.vel, disp[0] * 1.1)), v3.mul(A, disp[1] * 2.4)); P = v3.mix(P, R3(sp), S.scatter); }
+      let b = q.b * (0.75 + 0.25 * Math.sin(t * 1.3 + q.tw));
+      if (S.scan > 0.01 && S.scene.id === 'B2c') b += 1.3 * S.scan * Math.exp(-Math.pow(P[0] - scanX, 2) / 0.6);
+      if (q.c === OPP) b *= 1 + 0.9 * S.opp;
+      drawPoint(cam, P, q.sz, b * dim, q.c === OPP && S.opp > 0.3 ? SP.latao : SP.osso, aperture);
+    });
+
+    // tool node per cluster (isolated AI tools), blinking in Act I/II
+    clusters.forEach((C, i) => {
+      const blink = 0.55 + 0.45 * Math.max(0, Math.sin(t * 2.2 + i * 1.7));
+      const opp = i === OPP ? Math.max(S.opp, S.oppPoint) : 0;
+      drawPoint(cam, C, 0.16 + 0.22 * opp, (0.6 + 0.6 * blink * (1 - S.connect * 0.5) + 1.6 * opp) * dim, SP.latao, aperture);
+      if (opp > 0.01) drawPoint(cam, C, 0.9 * opp, 0.35 * opp * dim, SP.brass, aperture);
+    });
+
+    // center = decision
+    drawPoint(cam, [0, 0, 0], 0.14 + 0.12 * S.center, (0.25 + 1.2 * S.center) * dim, SP.osso, aperture);
+    for (let k = 0; k < 64; k++) { const a = k / 64 * 6.283 + t * 0.2; drawPoint(cam, [Math.cos(a) * 0.9, 0, Math.sin(a) * 0.9], 0.025, (0.1 + 0.5 * S.center) * dim, SP.osso, aperture); }
+
+    // broken links between neighbours
+    if (S.broken > 0.01) for (let i = 0; i < NC; i++) { const a = clusters[i], b = clusters[(i + 1) % NC], c1 = v3.add(v3.mul(v3.add(a, b), 0.55), [0, 1, 0]);
+      for (let k = 0; k <= 40; k++) { const u = k / 40; if (u > 0.36 && u < 0.64) continue; if (k % 4 > 1) continue;
+        drawPoint(cam, bez(a, c1, b, u), 0.03, 0.35 * S.broken * (0.6 + 0.4 * Math.sin(t * 9 + i + k)) * dim, SP.pedra, aperture); } }
+
+    // connections (threads) to center and neighbours
+    if (S.connect > 0.001) for (let i = 0; i < NC; i++) {
+      const a = clusters[i], c1 = v3.add(v3.mul(a, 0.5), [0, 2.4, 0]);
+      const lim = clamp(S.connect * 1.35 - i * 0.06);
+      for (let k = 0; k <= 56; k++) { const u = k / 56; if (u > lim) break; drawPoint(cam, bez(a, c1, [0, 0, 0], u), 0.03, 0.6 * dim, SP.latao, aperture); }
+      const b = clusters[(i + 1) % NC], c2 = v3.add(v3.mul(v3.add(a, b), 0.58), [0, 0.8, 0]);
+      for (let k = 0; k <= 40; k++) { const u = k / 40; if (u > lim) break; drawPoint(cam, bez(a, c2, b, u), 0.025, 0.4 * dim, SP.brass, aperture); }
+    }
+
+    // packets: orbit inside cluster (retained data) -> flow along threads (connected)
+    packets.forEach((k, j) => {
+      const C = clusters[k.c], ang = k.ph * 6.283 + t * k.sp * 1.6;
+      const orb = v3.add(C, [Math.cos(ang) * k.r, Math.sin(ang) * k.r * Math.cos(k.tilt) * 0.6, Math.sin(ang) * k.r * Math.sin(k.tilt)]);
+      let P = orb;
+      if (S.flow > 0.001) { const u = (k.ph + t * 0.22 * k.sp) % 1, c1 = v3.add(v3.mul(C, 0.5), [0, 2.4, 0]); P = v3.mix(orb, bez(C, c1, [0, 0, 0], u), S.flow); }
+      drawPoint(cam, P, 0.05, 1.1 * dim, SP.osso, aperture);
+    });
+
+    // repetitive loop highlight (cluster 2)
+    if (S.loopHi > 0.01) { const C = clusters[2];
+      for (let k = 0; k < 48; k++) { const a = k / 48 * 6.283; drawPoint(cam, v3.add(C, [Math.cos(a) * 1.1, Math.sin(a) * 0.45, Math.sin(a) * 0.6]), 0.025, 0.45 * S.loopHi, SP.latao, aperture); }
+      for (let tr = 0; tr < 10; tr++) { const a = (t - tr * 0.03) * 7.5; drawPoint(cam, v3.add(C, [Math.cos(a) * 1.1, Math.sin(a) * 0.45, Math.sin(a) * 0.6]), 0.07 - tr * 0.005, (1.3 - tr * 0.12) * S.loopHi, SP.latao, aperture); } }
+
+    // four pillar orbits
+    if (S.pillars > 0.01) [[0.35, 0], [-0.35, 1.57], [1.2, 0.8], [-1.2, 2.4]].forEach(([tl, ph], i) => {
+      for (let k = 0; k < 160; k++) { const u = k / 160; if (u > S.pillars * 1.15 - i * 0.05) break; const a = u * 6.283 + ph + t * 0.05;
+        const P = [Math.cos(a) * 13.5, Math.sin(a) * Math.sin(tl) * 13.5 * 0.5, Math.sin(a) * Math.cos(tl) * 13.5];
+        drawPoint(cam, P, 0.04, 0.55, SP.latao, aperture * 0.5); } });
+
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    return { cam, clusters, S };
+  }
+
+  // ---------- grain ----------
+  const grainTiles = [1, 2, 3, 4].map(sd => { const c = document.createElement('canvas'); c.width = c.height = 256; const gg = c.getContext('2d'), im = gg.createImageData(256, 256), r = rng(sd * 7919);
+    for (let i = 0; i < im.data.length; i += 4) { const v = r() * 255; im.data[i] = im.data[i+1] = im.data[i+2] = v; im.data[i+3] = 255; } gg.putImageData(im, 0, 0); return c.toDataURL(); });
+  const grain = document.getElementById('grain');
+
+  // ---------- overlay helpers ----------
+  const el = (tag, css = '', html = '') => { const e = document.createElement(tag); e.style.cssText = css; e.innerHTML = html; return e; };
+  function words(parent, text, css = '') {
+    const box = el('div', css);
+    text.split('\n').forEach((line, li) => { if (li) box.appendChild(document.createElement('br'));
+      line.split(' ').filter(Boolean).forEach((tok, i) => { if (i) box.appendChild(document.createTextNode(' '));
+        const sp = el('span'); sp.className = 'w';
+        if (/^\*.*\*[.,:?]?$/.test(tok)) { sp.classList.add('foil'); tok = tok.replace(/\*/g, ''); }
+        if (/^_.*_[.,:?]?$/.test(tok)) { sp.classList.add('it'); tok = tok.replace(/_/g, ''); }
+        sp.textContent = tok; box.appendChild(sp); }); });
+    parent.appendChild(box); return box; }
+  function reveal(box, t, start, stagger = 0.09, dur = 0.6, rise = 26) {
+    box.querySelectorAll('.w').forEach((w, i) => { const x = eo(p(t, start + i * stagger, start + i * stagger + dur));
+      w.style.opacity = x; w.style.transform = `translateY(${(1 - x) * rise * s}px)`; w.style.filter = x < 1 ? `blur(${(1 - x) * 10 * s}px)` : 'none'; }); }
+  const head = (e, text, top, size, extra = '') => words(e, text, `position:absolute;left:6%;right:6%;top:${top};text-align:center;font-size:${size * s}px;font-weight:400;line-height:1.12;text-shadow:0 4px 40px rgba(0,0,0,.8);${extra}`);
+  const sub = (e, text, top, size, extra = '') => words(e, text, `position:absolute;left:6%;right:6%;top:${top};text-align:center;font-family:${K.fontText};font-weight:300;font-size:${size * s}px;color:${K.fg};opacity:.9;text-shadow:0 2px 24px rgba(0,0,0,.9);${extra}`);
+  function chapter(e, n, txt) { const c = el('div', `left:${L(7, 5)}%;top:${L(9, 8)}%;font-size:${22 * s}px`); c.className = 'chapter lbl';
+    c.innerHTML = `<span>${n}</span><i style="width:${60 * s}px"></i><span>${txt}</span>`; e.appendChild(c); return c; }
+  const chap = (c, t) => { const x = eo(p(t, 0.15, 0.7)); c.style.opacity = x; c.querySelector('i').style.transform = `scaleX(${x})`; };
+  const tagAt = (tg, q, dy = 0) => { if (!q) { tg.style.opacity = 0; return false; } tg.style.left = q[0] + 'px'; tg.style.top = (q[1] + dy * s) + 'px'; return true; };
+
+  // ---------- overlay scenes ----------
+  const O = {}, root = document.getElementById('scenes');
+  O.H1 = { fin: 0, build(e) { e.a = head(e, 'Sua empresa já usa\ninteligência artificial.', L('24%', '16%'), L(86, 76)); e.b = head(e, 'A pergunta é: _na_ _direção_ *certa?*', L('36%', '33%'), L(70, 64)); },
+    update(e, t) { reveal(e.a, t, -0.1, 0.1, 0.5); reveal(e.b, t, 2.6, 0.12); e.a.style.opacity = 1 - 0.55 * p(t, 2.6, 3.2); } };
+  O.H2 = { fin: 0, build(e) { e.a = head(e, 'Cada área com a sua\nferramenta de IA.', L('22%', '14%'), L(86, 76)); e.b = head(e, '_E_ _nenhuma_ _conversando_\n_com_ _a_ *outra.*', L('62%', '62%'), L(72, 62)); },
+    update(e, t) { reveal(e.a, t, -0.1, 0.1, 0.5); reveal(e.b, t, 2.7, 0.1); } };
+  O.H3 = { fin: 0, build(e) { e.a = head(e, 'Se você tivesse que aplicar IA\nem *um* *só* *ponto* da sua empresa,', L('20%', '12%'), L(64, 60)); e.b = head(e, '_saberia_ _qual?_', L('62%', '64%'), L(104, 92)); },
+    update(e, t) { reveal(e.a, t, -0.1, 0.08, 0.5); reveal(e.b, t, 3.9, 0.14); } };
+  O.B1a = { build(e) { e.c = chapter(e, '01', 'ferramentas isoladas'); }, update(e, t) { chap(e.c, t); } };
+  O.B1b = { fin: 0.15, build(e) { e.c = chapter(e, '02', 'dados retidos'); }, update(e, t) { chap(e.c, t); } };
+  O.B1c = { fin: 0.15, build(e) { e.c = chapter(e, '03', 'retrabalho'); }, update(e, t) { chap(e.c, t); } };
+  O.B1d = { fin: 0.15, build(e) { e.c = chapter(e, '04', 'decisões sem informação'); e.q = el('div', `left:0;top:0;font-size:${26 * s}px;color:${K.muted}`, 'decisão'); e.q.className = 'tag lbl'; e.appendChild(e.q); },
+    update(e, t, d, W3) { chap(e.c, t); if (tagAt(e.q, W3.proj([0, 0, 0]), 70)) e.q.style.opacity = eo(p(t, 0.8, 1.4)); } };
+  O.B2a = { build(e) { e.c = chapter(e, '05', 'conexão'); }, update(e, t) { chap(e.c, t); } };
+  O.B2b = { fin: 0.2, build(e) {
+      e.tags = ['vende', 'atende', 'opera', 'decide'].map(w => { const x = el('div', `left:0;top:0;font-size:${L(64, 56) * s}px;font-style:italic;text-shadow:0 2px 30px rgba(0,0,0,.9)`, w); x.className = 'tag'; e.appendChild(x); return x; });
+    }, update(e, t, d, W3) { const at = [2.4, 2.9, 3.4, 3.9], tg = [W3.clusters[0], W3.clusters[1], W3.clusters[2], [0, 0, 0]];
+      e.tags.forEach((x, i) => { if (tagAt(x, W3.proj(tg[i]), -70)) { const y = eo(p(t, at[i], at[i] + 0.5)); x.style.opacity = y; x.style.color = i === 3 ? K.accentLight : K.fg; } }); } };
+  O.B2c = { build(e) { e.c = chapter(e, '06', 'prioridade');
+      e.ring = el('div', 'position:absolute;inset:0'); e.appendChild(e.ring);
+      e.ring.innerHTML = `<svg width="${W}" height="${H}" style="position:absolute;inset:0"><g id="rg" fill="none" stroke="${K.accentLight}">
+        <circle r="${90 * s}" stroke-width="${1.5 * s}" stroke-opacity=".7" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        <circle r="${130 * s}" stroke-width="${1 * s}" stroke-opacity=".4" stroke-dasharray="${3 * s} ${10 * s}"/></g></svg>`;
+      e.k = el('div', `left:0;top:0;font-size:${22 * s}px;color:${K.accentLight}`, 'maior impacto'); e.k.className = 'tag lbl'; e.appendChild(e.k);
+    }, update(e, t, d, W3) { chap(e.c, t); const q = W3.proj(W3.clusters[OPP]), rg = e.ring.querySelector('#rg');
+      if (q) { rg.setAttribute('transform', `translate(${q[0]},${q[1]}) rotate(${t * 20})`); const x = eio(p(t, 2.2, 3.4)); rg.firstElementChild.style.strokeDashoffset = 1 - x; rg.style.opacity = p(t, 2.0, 2.3);
+        tagAt(e.k, q, 170); e.k.style.opacity = eo(p(t, 2.8, 3.3)); } } };
+  O.B3a = { build(e) { e.logo = el('div', `position:absolute;left:0;right:0;top:${L('24%', '18%')};display:flex;justify-content:center`); e.logo.appendChild(lockup(L(110, 96) * s)); e.appendChild(e.logo);
+      e.a = sub(e, 'inteligência · estratégia · experiências', L('33%', '33%'), L(34, 30), 'letter-spacing:.06em');
+      e.b = head(e, '_impacto_ _real_ _para_ _o_ *negócio.*', L('37%', '39%'), L(70, 64)); },
+    update(e, t) { const x = eo(p(t, 0.6, 1.4)); e.logo.style.opacity = x; e.logo.style.transform = `scale(${lerp(.95, 1, x)})`; reveal(e.a, t, 1.4, 0.15); reveal(e.b, t, 2.6, 0.12); } };
+  O.B3b = { build(e) { e.logo = el('div', `position:absolute;left:0;right:0;top:${L('24%', '18%')};display:flex;justify-content:center`); e.logo.appendChild(lockup(L(110, 96) * s)); e.appendChild(e.logo);
+      const names = ['AI Strategy', 'Business Transformation', 'Global Intelligence', 'B2B Experiences'];
+      const pos = V ? [['8%', '58%', 'left'], ['8%', '58%', 'right'], ['8%', '64%', 'left'], ['8%', '64%', 'right']] : [['6%', '70%', 'left'], ['6%', '70%', 'right'], ['6%', '78%', 'left'], ['6%', '78%', 'right']];
+      e.p = names.map((n, i) => { const [m, top, side] = pos[i]; const x = el('div', `position:absolute;${side}:${m};top:${top};font-size:${L(25, 24) * s}px;color:${K.accentLight}`, n); x.className = 'lbl'; e.appendChild(x); return x; }); },
+    update(e, t) { e.p.forEach((x, i) => { const y = eo(p(t, 0.3 + i * 0.55, 0.8 + i * 0.55)); x.style.opacity = y; x.style.transform = `translateY(${(1 - y) * 16 * s}px)`; }); } };
+  O.B4a = { build(e) { e.a = sub(e, 'comece pelo', L('22%', '16%'), L(36, 32), 'letter-spacing:.2em;text-transform:uppercase;font-weight:400;font-size:' + 24 * s + 'px');
+      e.logo = el('div', `position:absolute;left:0;right:0;top:${L('25%', '21%')};text-align:center;font-size:${L(190, 170) * s}px;line-height:1.1`, '<span class="foil">ICEIA</span><span style="font-size:.3em;vertical-align:top;color:' + K.accentLight + '">™</span>'); e.appendChild(e.logo);
+      e.b = head(e, '_o_ _diagnóstico_ _estratégico_ _da_ LULLIA', L('37%', '40%'), L(56, 50)); },
+    update(e, t) { reveal(e.a, t, 0.05, 0.1); const x = eo(p(t, 0.25, 1.2)); e.logo.style.opacity = x; e.logo.style.letterSpacing = lerp(0.3, 0.03, x) + 'em';
+      e.logo.style.filter = x < 1 ? `blur(${(1 - x) * 14 * s}px)` : 'none'; reveal(e.b, t, 1.2, 0.08); } };
+  O.B4b = { fin: 0.2, build(e) {
+      const dims = ['Inteligência de Decisão', 'Cliente & Receita', 'Experiência & Engajamento', 'Influência de Mercado', 'Adoção de IA & Transformação'];
+      e.svg = el('div', 'position:absolute;inset:0'); e.appendChild(e.svg);
+      e.svg.innerHTML = `<svg width="${W}" height="${H}" style="position:absolute;inset:0"><g id="ax" stroke="${K.accentLight}" stroke-width="${1.5 * s}">${dims.map(() => '<line x1="0" y1="0" x2="0" y2="0" stroke-opacity=".55"/>').join('')}<polygon fill="rgba(220,192,138,.07)" stroke-opacity=".8" points=""/></g></svg>`;
+      e.d = dims.map((n, i) => { const x = el('div', `left:0;top:0;font-size:${L(21, 20) * s}px;text-align:center;line-height:1.35`,
+        `<span style="font-family:${K.fontDisplay};font-size:${46 * s}px;letter-spacing:0;text-transform:none;display:block" class="${i === 1 ? 'foil' : ''}">${'ICEIA'[i]}</span>${n.replace(' & ', ' &amp;<br>')}`);
+        x.className = 'tag lbl'; e.appendChild(x); return x; });
+      e.k = el('div', `left:0;top:0;font-size:${L(30, 28) * s}px;font-style:italic`, 'principal oportunidade de impacto'); e.k.className = 'tag'; e.appendChild(e.k);
+    }, update(e, t, d, W3) { const q = W3.proj(W3.clusters[OPP]) || [W / 2, H / 2]; const R0 = L(290, 260) * s, lv = [0.62, 0.95, 0.5, 0.58, 0.74];
+      const lines = e.svg.querySelectorAll('line'), poly = e.svg.querySelector('polygon'); let ptsS = '';
+      e.d.forEach((x, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / 5, y = eo(p(t, 0.3 + i * 0.18, 0.9 + i * 0.18));
+        const ex = q[0] + Math.cos(a) * R0 * y, ey = q[1] + Math.sin(a) * R0 * y; lines[i].setAttribute('x1', q[0]); lines[i].setAttribute('y1', q[1]); lines[i].setAttribute('x2', ex); lines[i].setAttribute('y2', ey);
+        const pv = eio(p(t, 1.4, 2.4)) * lv[i]; ptsS += `${q[0] + Math.cos(a) * R0 * pv},${q[1] + Math.sin(a) * R0 * pv} `;
+        tagAt(x, [q[0] + Math.cos(a) * (R0 + 95 * s), q[1] + Math.sin(a) * (R0 + 70 * s)]); x.style.opacity = y; });
+      poly.setAttribute('points', ptsS); tagAt(e.k, q, L(-R0 / s - 210, -R0 / s - 150)); e.k.style.opacity = eo(p(t, 2.4, 3.0)); } };
+  O.B4c = { build(e) { e.logo = el('div', `position:absolute;left:0;right:0;top:${L('16%', '10%')};display:flex;justify-content:center`); e.logo.appendChild(lockup(L(70, 60) * s)); e.appendChild(e.logo);
+      e.a = head(e, 'Faça o *ICEIA™*', L('28%', '26%'), L(124, 110));
+      e.b = sub(e, 'sem custo · resultado personalizado', L('37%', '41%'), L(30, 28), 'letter-spacing:.18em;text-transform:uppercase;font-weight:400;color:' + K.accentLight);
+      e.pill = el('div', `position:absolute;left:50%;top:${L('44%', '53%')};transform:translateX(-50%);padding:0 ${48 * s}px;height:${116 * s}px;border:${2 * s}px solid ${K.accentLight};background:rgba(10,13,16,.82);display:flex;align-items:center;gap:${22 * s}px;font-family:${K.fontText};font-size:${52 * s}px;letter-spacing:.04em;white-space:nowrap`,
+        `<span>lullia.com.br</span><span style="color:${K.accentLight}">→</span>`); e.appendChild(e.pill); },
+    update(e, t) { e.logo.style.opacity = eo(p(t, 0, 0.6)); reveal(e.a, t, 0.2, 0.12); reveal(e.b, t, 0.9, 0.05);
+      const x = eo(p(t, 1.3, 1.9)), glow = 0.5 + 0.5 * Math.sin((t - 1.9) * 3); e.pill.style.opacity = x;
+      e.pill.style.boxShadow = `0 0 ${(30 + 30 * glow * p(t, 1.9, 2.3)) * s}px rgba(220,192,138,${0.22 * p(t, 1.9, 2.3)})`; } };
+  O.B4d = { fout: 0.5, build(e) { e.logo = el('div', `position:absolute;left:0;right:0;top:${L('30%', '24%')};display:flex;justify-content:center`); e.logo.appendChild(lockup(L(130, 110) * s)); e.appendChild(e.logo);
+      e.a = head(e, TL.slogan[0] + '\n_' + TL.slogan[1].split(' ').join('_ _') + '_', L('42%', '46%'), L(54, 50), 'line-height:1.3');
+      e.u = sub(e, 'lullia.com.br', L('54%', '64%'), L(30, 28), 'letter-spacing:.12em;color:' + K.accentLight); },
+    update(e, t) { e.logo.style.opacity = eo(p(t, 0, 0.5)); reveal(e.a, t, 0.3, 0.07); reveal(e.u, t, 1.0, 0.1); } };
+
+  const scenes = TL.scenes.map(sc => { const def = O[sc.id], e = el('div'); e.className = 'scene'; root.appendChild(e); def.build(e); return { ...sc, def, e }; });
+
+  // ---------- captions (planned timing) ----------
+  const capEl = document.getElementById('captions');
+  capEl.style.top = L('70%', '86%'); capEl.style.fontSize = L(44, 40) * s + 'px';
+  const cues = [];
+  scenes.forEach(sc => { const ws = sc.vo.split(/\s+/).filter(Boolean); if (!ws.length) return; const d = sc.end - sc.start;
+    const v0 = sc.start + 0.12, v1 = sc.start + Math.min(ws.length / 2.4 + 0.2, d - 0.15);
+    const wt = ws.map(w => w.length + 2), tot = wt.reduce((a, b) => a + b, 0); let acc = 0;
+    const times = ws.map((w, i) => { const t0 = v0 + (v1 - v0) * acc / tot; acc += wt[i]; return t0; });
+    let cur = []; const flush = () => { if (cur.length) cues.push({ words: cur, scene: sc }); cur = []; };
+    ws.forEach((w, i) => { if (cur.length && cur.map(x => x.w).join(' ').length + w.length + 1 > 30) flush(); cur.push({ w, t: times[i] }); if (/[,.:?—]$/.test(w) && cur.length >= 2) flush(); });
+    flush(); });
+  cues.forEach(c => { c.start = c.words[0].t; });
+  cues.forEach((c, i) => { const nx = cues[i + 1]; c.end = nx && nx.scene === c.scene ? nx.start : Math.min(c.scene.end - 0.05, c.words[c.words.length - 1].t + 0.9); });
+  let lastCue = null;
+  function captionsAt(t) { const c = cues.find(c => t >= c.start && t < c.end);
+    if (c !== lastCue) { capEl.innerHTML = c ? c.words.map(x => `<span class="cw">${x.w}</span>`).join(' ') : ''; lastCue = c; }
+    if (c) capEl.querySelectorAll('.cw').forEach((sp, i) => sp.classList.toggle('on', t >= c.words[i].t)); }
+  const fmt = t => { const ms = Math.round(t * 1000), h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, sx = Math.floor(ms / 1000) % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sx).padStart(2, '0')},${String(ms % 1000).padStart(3, '0')}`; };
+
+  // ---------- seek ----------
+  const env = (lt, d, fin = .35, fout = .3) => Math.min(fin ? eo(p(lt, 0, fin)) : 1, fout ? 1 - p(lt, d - fout, d) : 1);
+  function seek(t) {
+    const f = Math.round(t * TL.fps);
+    const W3 = renderWorld(t); W3.proj = P => project(W3.cam, P);
+    grain.style.backgroundImage = `url(${grainTiles[f % 4]})`; grain.style.backgroundPosition = `${(f * 37) % 256}px ${(f * 61) % 256}px`;
+    scenes.forEach(sc => { const d = sc.end - sc.start, lt = t - sc.start;
+      if (lt < 0 || lt > d) { sc.e.style.opacity = 0; sc.e.style.visibility = 'hidden'; return; }
+      sc.e.style.visibility = 'visible'; sc.e.style.opacity = env(lt, d, sc.def.fin ?? 0.35, sc.def.fout ?? 0.3); sc.def.update(sc.e, lt, d, W3); });
+    // fade from black at start of film, to black at end
+    stage.style.filter = '';
+    captionsAt(t);
+  }
+  window.__composition = { fps: TL.fps, width: W, height: H, duration: TL.duration, hits: TL.hits, pulse: TL.pulse, variant: TL.variant, seek,
+    ready: fontsLoaded.then(() => document.fonts.ready).then(() => { seek(0); return true; }),
+    srt: () => cues.map((c, i) => `${i + 1}\n${fmt(c.start)} --> ${fmt(c.end)}\n${c.words.map(x => x.w).join(' ')}\n`).join('\n'),
+    cues: () => cues.map(c => ({ start: c.start, end: c.end, text: c.words.map(x => x.w).join(' ') })) };
+})();
+</script>
+</body>
+</html>

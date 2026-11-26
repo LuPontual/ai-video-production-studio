@@ -33,19 +33,18 @@ def check(results, name, ok, detail, blocking=True):
 
 def srt_cues(path):
     txt = open(path, encoding="utf-8").read().strip()
-    cues = []
+    cues, bad = [], []
     for block in re.split(r"\n\s*\n", txt):
         lines = block.strip().splitlines()
-        if len(lines) < 3:
-            continue
-        m = re.match(r"(\d+):(\d+):(\d+),(\d+) --> (\d+):(\d+):(\d+),(\d+)", lines[1])
+        m = re.match(r"(\d+):(\d+):(\d+),(\d+) --> (\d+):(\d+):(\d+),(\d+)$", lines[1]) if len(lines) >= 3 else None
         if not m:
+            bad.append(block[:80])
             continue
         v = list(map(int, m.groups()))
         s = v[0] * 3600 + v[1] * 60 + v[2] + v[3] / 1000
         e = v[4] * 3600 + v[5] * 60 + v[6] + v[7] / 1000
         cues.append({"start": s, "end": e, "lines": lines[2:]})
-    return cues
+    return cues, bad
 
 
 def main():
@@ -97,7 +96,8 @@ def main():
     check(R, "frozen_segments", not freezes, f"{len(freezes)} hold(s) ≥ {TH['freeze_min']}s at {freezes}" if freezes else "none", blocking=False)
 
     if a.srt:
-        cues = srt_cues(a.srt)
+        cues, bad = srt_cues(a.srt)
+        check(R, "captions_well_formed", not bad, f"{len(bad)} malformed cue block(s)" + (f": {bad[:2]}" if bad else ""))
         short = [c for c in cues if c["end"] - c["start"] < TH["cue_min"]]
         long_ = [c for c in cues if c["end"] - c["start"] > TH["cue_max"]]
         overlap = [i for i in range(1, len(cues)) if cues[i]["start"] < cues[i - 1]["end"] - 1e-3]

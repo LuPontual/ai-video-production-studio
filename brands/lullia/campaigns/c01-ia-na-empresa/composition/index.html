@@ -266,6 +266,47 @@
       e.pill.style.boxShadow = `0 0 ${30 + 30 * glow * p(t, 1.6, 2)}px rgba(220,192,138,${0.2 * p(t, 1.6, 2)})`;
     } };
 
+  // ---------- Hook B: "Sua empresa já usa IA. Mas ela já mudou algum resultado do negócio?" ----------
+  S.B01 = { fin: 0, build(e) {
+      e.h = words(e, 'Sua empresa\njá usa *IA.*', `position:absolute;left:0;right:0;top:700px;text-align:center;font-size:150px;font-weight:400;line-height:1.08`);
+      e.h.querySelectorAll('.w')[2].classList.add('it'); e.h.querySelectorAll('.w')[3].classList.add('it');
+      e.chk = label(e, 'IA em uso · ✓', `position:absolute;left:0;right:0;top:1080px;text-align:center;font-size:26px;color:${K.accentLight}`);
+    }, update(e, t) {
+      reveal(e.h, t, -0.12, 0.12, 0.45);
+      e.chk.style.opacity = eo(p(t, 1.0, 1.5));
+    } };
+  S.B02 = { build(e) {
+      e.a = words(e, 'Mas ela já mudou algum', `position:absolute;left:0;right:0;top:560px;text-align:center;font-family:${K.fontText};font-size:58px;font-weight:300;color:${K.muted}`);
+      e.b = words(e, '*resultado*', `position:absolute;left:0;right:0;top:650px;text-align:center;font-size:200px;font-weight:400;line-height:1.1`);
+      e.c = words(e, '_do_ _negócio?_', `position:absolute;left:0;right:0;top:880px;text-align:center;font-size:96px;font-weight:400`);
+      e.axis = el('div', `position:absolute;left:140px;width:800px;top:1100px;height:170px;border-left:1.5px solid ${K.line};border-bottom:1.5px solid ${K.line}`); e.appendChild(e.axis);
+      e.flat = el('div', `position:absolute;left:142px;top:1200px;height:3px;width:796px;background:${K.accentLight};transform-origin:left`); e.appendChild(e.flat);
+      e.l1 = label(e, 'antes', `position:absolute;left:140px;top:1284px;font-size:20px;color:${K.muted}`);
+      e.l2 = label(e, 'depois', `position:absolute;left:850px;top:1284px;font-size:20px;color:${K.muted}`);
+    }, update(e, t) {
+      reveal(e.a, t, 0.05, 0.08);
+      const x = expo(p(t, 0.7, 1.4)); e.b.style.opacity = x; e.b.style.transform = `scale(${lerp(1.08, 1, x)})`; e.b.querySelector('.w').style.opacity = 1;
+      e.b.style.filter = x < 1 ? `blur(${(1 - x) * 12}px)` : 'none';
+      reveal(e.c, t, 1.6, 0.12);
+      const g = eo(p(t, 2.0, 2.4)); e.axis.style.opacity = g; e.l1.style.opacity = g; e.l2.style.opacity = g;
+      e.flat.style.transform = `scaleX(${eio(p(t, 2.2, 3.6))})`;
+    } };
+
+  // ---------- Hook C: "Usar IA para escrever e-mails não é estratégia de inteligência artificial." ----------
+  S.C01 = { fin: 0, build(e) {
+      e.a = words(e, 'Usar IA para escrever', `position:absolute;left:0;right:0;top:470px;text-align:center;font-family:${K.fontText};font-size:58px;font-weight:300;color:${K.muted}`);
+      e.chip = el('div', `left:190px;top:570px;width:700px;height:190px;font-size:110px;font-weight:400;font-style:italic`, 'e-mails'); e.chip.className = 'chip'; e.appendChild(e.chip);
+      e.strike = el('div', `position:absolute;left:150px;top:663px;width:780px;height:5px;background:${K.foil};transform-origin:left`); e.appendChild(e.strike);
+      e.b = words(e, 'não é *estratégia*\nde inteligência artificial.', `position:absolute;left:0;right:0;top:880px;text-align:center;font-size:92px;font-weight:400;line-height:1.15`);
+      e.b.querySelectorAll('.w').forEach((w, i) => { if (i >= 3) w.classList.add('it'); });
+    }, update(e, t) {
+      reveal(e.a, t, -0.1, 0.08, 0.4);
+      const x = expo(p(t, 0.0, 0.5)); e.chip.style.opacity = x; e.chip.style.transform = `scale(${lerp(0.9, 1, x)})`;
+      e.strike.style.transform = `scaleX(${eio(p(t, 1.9, 2.4))})`;
+      e.chip.style.opacity = x * lerp(1, 0.35, eo(p(t, 2.3, 2.8)));
+      reveal(e.b, t, 2.3, 0.11);
+    } };
+
   const scenes = TL.scenes.map(s => { const def = S[s.id], e = el('div'); e.className = 'scene'; root.appendChild(e); def.build(e); return { ...s, def, e }; });
 
   // ---------- captions (planned timing; re-synced from VO transcript in production) ----------
@@ -283,7 +324,8 @@
     });
     flush();
   });
-  cues.forEach((c, i) => { c.start = c.words[0].t; const nx = cues[i + 1];
+  cues.forEach(c => { c.start = c.words[0].t; });
+  cues.forEach((c, i) => { const nx = cues[i + 1];
     c.end = nx && nx.scene === c.scene ? nx.start : Math.min(c.scene.end - 0.05, c.words[c.words.length - 1].t + 0.9); });
   const capEl = document.getElementById('captions');
   let lastCue = null;
@@ -299,7 +341,7 @@
   function seek(t) {
     const f = Math.round(t * TL.fps);
     bg.style.background = `radial-gradient(ellipse 70% 45% at ${50 + 18 * Math.sin(t * 0.13)}% ${38 + 8 * Math.cos(t * 0.1)}%, rgba(169,131,74,0.10), rgba(169,131,74,0) 70%), linear-gradient(180deg, ${K.bg}, ${K.deep})`;
-    const quiet = (t > 21.4 && t < 27.0) ? 0.35 : 1;
+    const quiet = (t > TL.quiet[0] && t < TL.quiet[1]) ? 0.35 : 1;
     gEl.setAttribute('stroke-opacity', 0.07 * quiet);
     gEl.setAttribute('transform', `translate(0, ${-((t * 9) % 90)})`);
     grain.style.backgroundImage = `url(${grainTiles[f % 4]})`;
@@ -315,7 +357,7 @@
   }
 
   window.__composition = {
-    fps: TL.fps, width: TL.width, height: TL.height, duration: TL.duration, hits: TL.hits, seek,
+    fps: TL.fps, width: TL.width, height: TL.height, duration: TL.duration, hits: TL.hits, pulse: TL.pulse, variant: TL.variant, seek,
     ready: fontsLoaded.then(() => document.fonts.ready).then(() => { seek(0); return true; }),
     srt: () => cues.map((c, i) => `${i + 1}\n${fmt(c.start)} --> ${fmt(c.end)}\n${c.words.map(x => x.w).join(' ')}\n`).join('\n'),
     cues: () => cues.map(c => ({ start: c.start, end: c.end, text: c.words.map(x => x.w).join(' ') }))

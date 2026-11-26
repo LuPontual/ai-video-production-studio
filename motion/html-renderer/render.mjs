@@ -6,7 +6,7 @@
 // seek(t) must set the whole frame purely from t (no wall-clock animation).
 //
 // Usage:
-//   node render.mjs --comp path/index.html --out video.mp4 [--srt out.srt] [--from 0] [--to <dur>] [--quality 92]
+//   node render.mjs --comp path/index.html --out video.mp4 [--query variant=B] [--meta meta.json] [--srt out.srt] [--from 0] [--to <dur>] [--quality 92]
 //   node render.mjs --comp path/index.html --stills 1.5,10,24 --stills-dir dir/
 import { createRequire } from 'node:module';
 import { spawn } from 'node:child_process';
@@ -23,7 +23,8 @@ if (!args.comp) { console.error('missing --comp'); process.exit(2); }
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
 page.on('pageerror', e => { console.error('page error:', e.message); process.exitCode = 1; });
-await page.goto(pathToFileURL(resolve(args.comp)).href);
+const url = pathToFileURL(resolve(args.comp)); if (args.query) url.search = String(args.query);
+await page.goto(url.href);
 await page.waitForFunction(() => window.__composition);
 await page.evaluate(() => window.__composition.ready);
 const meta = await page.evaluate(() => { const c = window.__composition; return { fps: c.fps, width: c.width, height: c.height, duration: c.duration }; });
@@ -31,6 +32,8 @@ await page.setViewportSize({ width: meta.width, height: meta.height });
 const stage = await page.$('#stage');
 
 if (args.srt) writeFileSync(args.srt, await page.evaluate(() => window.__composition.srt()));
+if (args.meta) writeFileSync(args.meta, JSON.stringify(await page.evaluate(() => { const c = window.__composition;
+  return { variant: c.variant, fps: c.fps, width: c.width, height: c.height, duration: c.duration, hits: c.hits, pulse: c.pulse, cues: c.cues && c.cues() }; }), null, 2));
 
 if (args.stills) {
   const dir = args['stills-dir'] || '.'; mkdirSync(dir, { recursive: true });
